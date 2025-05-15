@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/[...nextauth]/route';
 import { Box, Typography } from '@mui/material';
+import { authOptions } from '@/lib/auth/authOptions';
 
 export default async function ManagerPage() {
     const session: any = await getServerSession(authOptions)

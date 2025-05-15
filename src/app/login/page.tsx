@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/[...nextauth]/route';
 import { Suspense } from 'react';
 import LoginForm from './components/LoginForm';
 import { redirect } from 'next/navigation';
 import { Container } from '@mui/material';
-
+import { authOptions } from '@/lib/auth/authOptions';
 
 export default async function LoginPage() {
     const session: any = await getServerSession(authOptions);
