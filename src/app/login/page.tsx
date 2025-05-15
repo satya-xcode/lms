@@ -21,7 +21,7 @@ export default async function LoginPage() {
 
     return (
         <Container maxWidth="sm">
-            <Suspense>
+            <Suspense fallback={<div>Loading...</div>}>
                 <LoginForm />
             </Suspense>
         </Container>
