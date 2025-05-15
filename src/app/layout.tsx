@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+import { Container, CssBaseline, ThemeProvider } from "@mui/material";
+import theme from "@/theme/theme";
+import Navbar from "@/components/Navbar";
+import SessionWrapper from "@/SessionWrapper";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -24,7 +29,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+        <AppRouterCacheProvider>
+          <SessionWrapper>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <Navbar />
+              <Container maxWidth="lg" sx={{ minHeight: '80vh', py: 4 }}>
+                {children}
+              </Container>
+            </ThemeProvider>
+          </SessionWrapper>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );

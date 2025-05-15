@@ -1,36 +1,21 @@
-import mongoose, { Document, Schema } from 'mongoose';
-import bcrypt from 'bcrypt';
-
-export enum UserRole {
-    STAFF = 'staff',
-    ADMIN = 'admin',
-    MANAGER = 'manager',
-}
+import mongoose, { Schema, Document, models } from 'mongoose';
 
 export interface IUser extends Document {
+    name: string;
     email: string;
+    mobile: string;
     password: string;
-    role: UserRole;
-    createdAt: Date;
-    updatedAt: Date;
-    comparePassword(candidatePassword: string): Promise<boolean>;
+    role: 'admin' | 'manager' | 'staff';
+    provider?: string;
 }
 
-const userSchema = new Schema<IUser>({
+const UserSchema = new Schema<IUser>({
+    name: { type: String },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    role: { type: String, enum: Object.values(UserRole), default: UserRole.STAFF },
-}, { timestamps: true });
-
-userSchema.pre<IUser>('save', async function (next) {
-    if (!this.isModified('password')) return next();
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
+    mobile: { type: String },
+    password: { type: String },
+    role: { type: String, enum: ['admin', 'manager', 'staff'], default: 'staff' },
+    provider: { type: String },
 });
 
-userSchema.methods.comparePassword = async function (candidatePassword: string) {
-    return bcrypt.compare(candidatePassword, this.password);
-};
-
-export default mongoose.models.User || mongoose.model<IUser>('User', userSchema);
+export const User = models.User || mongoose.model<IUser>('User', UserSchema);
