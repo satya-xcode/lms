@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
 import React from 'react'
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useRouter } from 'next/navigation';
@@ -16,8 +16,13 @@ const RegisterSchema = Yup.object().shape({
 function RegisterForm() {
     const router = useRouter()
     return (
-        <Box mt={8}>
-            <Typography variant="h4" mb={2}>Register</Typography>
+        <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+            <Typography variant="h4" component="h1" align="center" gutterBottom>
+                Welcome Back
+            </Typography>
+            <Typography variant="body2" color="text.secondary" align="center" mb={4}>
+                Please enter your credentials to continue
+            </Typography>
             <Formik
                 initialValues={{ name: '', mobile: '', email: '', password: '' }}
                 validationSchema={RegisterSchema}
@@ -36,8 +41,10 @@ function RegisterForm() {
                         }
                     } catch (err) {
                         setErrors({ email: 'Something went wrong' });
+                    } finally {
+                        setSubmitting(false);
                     }
-                    setSubmitting(false);
+
                 }}
             >
                 {({ errors, touched, isSubmitting }) => (
@@ -56,7 +63,7 @@ function RegisterForm() {
                     </Form>
                 )}
             </Formik>
-        </Box>
+        </Paper>
     )
 }
 

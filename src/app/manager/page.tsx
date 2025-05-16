@@ -1,18 +1,34 @@
+'use client'
+import AccessRestricted from '@/components/AccessRestricted';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getServerSession } from 'next-auth';
-import { Box, Typography } from '@mui/material';
-import { authOptions } from '@/lib/auth/authOptions';
+import { Box, CircularProgress, Typography } from '@mui/material';
+import { useSession } from 'next-auth/react';
 
-export default async function ManagerPage() {
-    const session: any = await getServerSession(authOptions)
-    if (!session?.user || session.user.role !== "manager") {
-        return (
-            <Box sx={{ p: 4 }}>
-                <Typography variant="h5" color="error">Access Denied</Typography>
-                <Typography>Please login with a manager account to continue.</Typography>
-            </Box>
-        );
+import { useRouter } from 'next/navigation';
+
+export default function DashboardPage() {
+    const router = useRouter()
+    const { status, data }: any = useSession({
+        required: true,
+        onUnauthenticated() {
+            // You could redirect here if you prefer
+            router.push('/unauthorized');
+        },
+    })
+
+    if (status === 'loading') {
+        return <CircularProgress />
     }
+    if (data?.user?.role !== 'manager') {
+        return (
+            <AccessRestricted />
+        )
+    }
+    return (
+        <Box sx={{ p: 4 }}>
+            <Typography variant='h3'>Manager Dashboard</Typography>
+        </Box>
+    );
 
-    return <div>Manager Dashboard</div>;
 }

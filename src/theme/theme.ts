@@ -7,7 +7,7 @@ import { colors, createTheme, responsiveFontSizes } from '@mui/material';
 const baseTheme = createTheme({
   spacing: 8,
   palette: {
-    mode: 'dark',
+    mode: 'light',
     primary: {
       main: colors.teal[600], // Professional blue
 
@@ -18,7 +18,7 @@ const baseTheme = createTheme({
       light: '#ff79b0',
     },
     background: {
-      default: '#1B262C',
+      // default: '#1B262C',
     }
   },
   breakpoints: {
@@ -51,7 +51,7 @@ const baseTheme = createTheme({
     MuiContainer: {
       defaultProps: {
         maxWidth: 'xl',
-        disableGutters: true
+        disableGutters: false
       },
       styleOverrides: {
         root: {
@@ -62,9 +62,9 @@ const baseTheme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: "rgba(1, 19, 29, 0.81)",
-          WebkitBackdropFilter: "blur(10px)",
-          backdropFilter: "blur(10px)"
+          // backgroundColor: "rgba(17, 206, 49, 0.38)",
+          // WebkitBackdropFilter: "blur(10px)",
+          // backdropFilter: "blur(10px)"
         }
       }
     },

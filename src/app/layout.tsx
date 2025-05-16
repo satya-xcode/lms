@@ -34,7 +34,7 @@ export default function RootLayout({
             <ThemeProvider theme={theme}>
               <CssBaseline />
               <Navbar />
-              <Container maxWidth="lg" sx={{ minHeight: '80vh', py: 4 }}>
+              <Container maxWidth={false} sx={{ py: 4 }}>
                 {children}
               </Container>
             </ThemeProvider>

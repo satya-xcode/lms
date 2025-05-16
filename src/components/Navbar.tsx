@@ -1,32 +1,130 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// Placeholder for Navbar.tsx'use client';
-'use client'
-import { useSession, signOut } from 'next-auth/react';
-import { AppBar, Toolbar, Typography, Button, Stack } from '@mui/material';
+'use client';
+
+import React, { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import {
+    AppBar,
+    Toolbar,
+    Typography,
+    Button,
+    Stack,
+    IconButton,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemText,
+    CircularProgress,
+    useMediaQuery,
+    useTheme,
+
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 import Link from 'next/link';
+import SignOutButton from './SignOutButton';
+
+const commonLinks = [
+    { label: 'Home', href: '/' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+];
 
 export default function Navbar() {
-    const { data: session }: any = useSession();
-    return (
-        <AppBar position="static">
-            <Toolbar>
-                <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold' }}>TIANYIN LMS</Typography>
-                {session?.user ? (
-                    <Stack direction={'row'} alignItems={'center'} spacing={2}>
-                        <Button color="inherit" component={Link} href="/about">About</Button>
-                        <Button color="inherit" component={Link} href="/contact">Contact</Button>
-                        <Typography>{session.user.name} ( {session.user.role} )</Typography>
-                        <Button color="inherit" onClick={() => signOut({ redirect: true, callbackUrl: '/login' })}>Logout</Button>
-                    </Stack>
-                ) : (
-                    <Stack direction={'row'} alignItems={'center'} spacing={2}>
-                        <Button color="inherit" component={Link} href="/about">About</Button>
-                        <Button color="inherit" component={Link} href="/contact">Contact</Button>
-                        <Button color="inherit" component={Link} href="/login">Login</Button>
-                    </Stack>
 
-                )}
-            </Toolbar>
-        </AppBar>
+
+    const { data: session, status }: any = useSession();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const [dialogOpen, setDialogOpen] = useState(false);
+
+    const handleOpen = () => setDialogOpen(true);
+    const handleClose = () => setDialogOpen(false);
+
+    const authLinks = session?.user ? (
+        <>
+            <ListItem>
+                <ListItemText primary={`${session.user.name} (${session.user.role})`} />
+            </ListItem>
+            <ListItem>
+                <SignOutButton />
+            </ListItem>
+        </>
+    ) : (
+        <ListItem>
+            <ListItemButton component={Link} href="/login" onClick={handleClose}>
+                <ListItemText primary="Login" />
+            </ListItemButton>
+        </ListItem>
+    );
+
+    return (
+        <>
+            <AppBar position="static">
+                <Toolbar>
+                    <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
+                        TIANYIN LMS
+                    </Typography>
+
+                    {isMobile ? (
+                        <IconButton edge="end" color="inherit" onClick={handleOpen}>
+                            <MenuIcon />
+                        </IconButton>
+                    ) : (
+                        <Stack direction="row" alignItems="center" spacing={2}>
+                            {commonLinks.map(({ label, href }) => (
+                                <Button key={href} color="inherit" component={Link} href={href}>
+                                    {label}
+                                </Button>
+                            ))}
+                            {status === 'loading' ? (
+                                <CircularProgress color="inherit" size={24} />
+                            ) : session?.user ? (
+                                <>
+                                    <Typography>
+                                        {session.user.name} ({session.user.role})
+                                    </Typography>
+                                    <SignOutButton />
+                                </>
+                            ) : (
+                                <Button color="inherit" component={Link} href="/login">
+                                    Login
+                                </Button>
+                            )}
+                        </Stack>
+                    )}
+                </Toolbar>
+            </AppBar>
+
+            <Dialog open={dialogOpen} onClose={handleClose} fullScreen>
+                <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    Menu
+                    <IconButton onClick={handleClose}>
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                    <List>
+                        {commonLinks.map(({ label, href }) => (
+                            <ListItem key={href} disablePadding>
+                                <ListItemButton component={Link} href={href} onClick={handleClose}>
+                                    <ListItemText primary={label} />
+                                </ListItemButton>
+                            </ListItem>
+                        ))}
+                        {status === 'loading' ? (
+                            <ListItem>
+                                <CircularProgress size={24} />
+                            </ListItem>
+                        ) : (
+                            authLinks
+                        )}
+                    </List>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 }
