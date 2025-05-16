@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-
 import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import {
@@ -19,8 +18,7 @@ import {
     ListItemText,
     CircularProgress,
     useMediaQuery,
-    useTheme,
-
+    useTheme
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
@@ -34,8 +32,6 @@ const commonLinks = [
 ];
 
 export default function Navbar() {
-
-
     const { data: session, status }: any = useSession();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -80,20 +76,22 @@ export default function Navbar() {
                                     {label}
                                 </Button>
                             ))}
-                            {status === 'loading' ? (
-                                <CircularProgress color="inherit" size={24} />
-                            ) : session?.user ? (
-                                <>
-                                    <Typography>
-                                        {session.user.name} ({session.user.role})
-                                    </Typography>
-                                    <SignOutButton />
-                                </>
-                            ) : (
-                                <Button color="inherit" component={Link} href="/login">
-                                    Login
-                                </Button>
-                            )}
+                            {
+                                // status === 'loading' ? (
+                                //     <CircularProgress color="inherit" size={24} />
+                                // ) : 
+                                session?.user ? (
+                                    <>
+                                        <Typography>
+                                            {session.user.name} ({session.user.role})
+                                        </Typography>
+                                        <SignOutButton />
+                                    </>
+                                ) : (
+                                    <Button color="inherit" component={Link} href="/login">
+                                        Login
+                                    </Button>
+                                )}
                         </Stack>
                     )}
                 </Toolbar>

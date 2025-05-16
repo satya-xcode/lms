@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import LoginForm from './components/LoginForm';
 import { redirect } from 'next/navigation';
 import { Container } from '@mui/material';

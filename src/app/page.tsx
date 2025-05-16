@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // app/page.tsx
-
+'use client'
 import { Button, Container, Typography } from '@mui/material';
 import Link from 'next/link';
 import SignOutButton from '@/components/SignOutButton';
-import { getSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 
-export default async function Home() {
-  const data: any = await getSession()
+export default function Home() {
+  const { data }: any = useSession()
   return (
     <Container maxWidth="sm" sx={{
       display: 'flex',
