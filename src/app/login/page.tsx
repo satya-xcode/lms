@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getServerSession } from 'next-auth';
+
 import LoginForm from './components/LoginForm';
 import { redirect } from 'next/navigation';
 import { Container } from '@mui/material';
-import { authOptions } from '@/lib/auth/authOptions';
+import { getSession } from 'next-auth/react';
 
 export default async function LoginPage() {
-    const session: any = await getServerSession(authOptions);
+    const session = await getSession();
 
     if (session?.user) {
         return redirect('/');
