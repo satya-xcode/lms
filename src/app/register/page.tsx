@@ -1,14 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
+'use client'
 import { redirect } from 'next/navigation';
 import { Container } from '@mui/material';
 import RegisterForm from './components/RegisterForm';
-import { getSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
+import LoadingProgress from '@/components/LoadingProgress';
 
-export default async function RegisterPage() {
+export default function RegisterPage() {
+    const session = useSession();
 
-    const session: any = await getSession();
-    if (session?.user) {
+    if (session.status === 'loading') {
+        return <LoadingProgress />
+    }
+
+    if (session.status === 'authenticated') {
         return redirect('/');
     }
 
