@@ -73,28 +73,28 @@ const baseTheme = createTheme({
         variant: 'outlined'
       },
       styleOverrides: {
-        root: {
-          backgroundColor: "rgba(255, 255, 255, 0.05)",
-          WebkitBackdropFilter: "blur(10px)",
-          borderRadius: 8,
-          boxShadow: `
-            0px 4px 6px -1px rgba(0, 0, 0, 0.1),
-            0px 2px 4px -1px rgba(0, 0, 0, 0.06),
-            0px 10px 20px -10px rgba(0, 0, 0, 0.2)
-          `,
-          // transform: "translateY(0px) scale(1)",
-          transition: "transform 0.3s  ease-in-out, box-shadow 0.3s ease-in-out",
-          position: "relative",
-          zIndex: 1,
-          "&:hover": {
-            transform: "translateY(-5px) scale(1.02)",
-            boxShadow: `
-              0px 8px 12px -2px rgba(0, 247, 255, 0.4),
-              0px 4px 8px -2px rgba(0, 247, 255, 0.3),
-              0px 20px 30px -10px rgba(0, 204, 255, 0.3)
-            `,
-          },
-        }
+        // root: {
+        //   backgroundColor: "rgba(255, 255, 255, 0.05)",
+        //   WebkitBackdropFilter: "blur(10px)",
+        //   borderRadius: 8,
+        //   boxShadow: `
+        //     0px 4px 6px -1px rgba(0, 0, 0, 0.1),
+        //     0px 2px 4px -1px rgba(0, 0, 0, 0.06),
+        //     0px 10px 20px -10px rgba(0, 0, 0, 0.2)
+        //   `,
+        //   // transform: "translateY(0px) scale(1)",
+        //   transition: "transform 0.3s  ease-in-out, box-shadow 0.3s ease-in-out",
+        //   position: "relative",
+        //   zIndex: 1,
+        //   "&:hover": {
+        //     transform: "translateY(-5px) scale(1.02)",
+        //     boxShadow: `
+        //       0px 8px 12px -2px rgba(0, 247, 255, 0.4),
+        //       0px 4px 8px -2px rgba(0, 247, 255, 0.3),
+        //       0px 20px 30px -10px rgba(0, 204, 255, 0.3)
+        //     `,
+        //   },
+        // }
       }
     }
   },

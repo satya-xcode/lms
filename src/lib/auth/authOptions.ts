@@ -4,10 +4,9 @@
 import { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
-import bcrypt from 'bcrypt';
+// import bcrypt from 'bcrypt';
 import { connectToDB } from '@/lib/mongoose';
-import { User } from '@/models/User';
-
+import User from '@/models/User';
 export const authOptions: AuthOptions = {
     providers: [
         CredentialsProvider({
@@ -18,12 +17,16 @@ export const authOptions: AuthOptions = {
             },
             async authorize(credentials: any) {
                 await connectToDB();
-                const user = await User.findOne({ email: credentials.email });
+                // const user = await User.findOne({ email: credentials.email });
+                // if (!user || !user.password) throw new Error('Invalid credentials');
+                // const isValid = credentials.password == user.password
+                // if (!isValid) throw new Error('Invalid password');
+                const user = await User.findOne({
+                    email: credentials.email,
+                    password: credentials.password // Direct comparison (INSECURE)
+                });
 
-                if (!user || !user.password) throw new Error('Invalid credentials');
-                const isValid = await bcrypt.compare(credentials.password, user.password);
-                if (!isValid) throw new Error('Invalid password');
-
+                if (!user) throw new Error('Invalid credentials');
                 return {
                     id: user._id,
                     name: user.name,

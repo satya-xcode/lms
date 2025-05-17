@@ -1,15 +1,26 @@
-'use client'
+'use client';
 import { redirect } from 'next/navigation';
 import { Container } from '@mui/material';
-import RegisterForm from './components/RegisterForm';
 import { useSession } from 'next-auth/react';
 import LoadingProgress from '@/components/LoadingProgress';
+import RegistrationForm from './components/RegistrationForm';
+import useSWR from 'swr';
+import { fetcher } from '@/lib/fetcher';
+
+interface Manager {
+    _id: string;
+    name: string;
+    email: string;
+}
 
 export default function RegisterPage() {
+    const { data: managers, isLoading: managersLoading } = useSWR<Manager[]>('/api/managers', fetcher, {});
+    // console.log('Managerrrr', managers)
     const session = useSession();
 
-    if (session.status === 'loading') {
-        return <LoadingProgress />
+
+    if (session.status === 'loading' || managersLoading) {
+        return <LoadingProgress />;
     }
 
     if (session.status === 'authenticated') {
@@ -18,7 +29,7 @@ export default function RegisterPage() {
 
     return (
         <Container maxWidth="sm">
-            <RegisterForm />
+            <RegistrationForm managers={managers || []} />
         </Container>
     );
 }
