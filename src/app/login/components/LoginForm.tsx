@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Link from 'next/link';
 
@@ -29,8 +29,8 @@ const LoginSchema = Yup.object().shape({
 
 export default function LoginForm() {
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const callbackUrl = searchParams.get('callbackUrl') || '/';
+    // const searchParams = useSearchParams();
+    // const callbackUrl = searchParams.get('callbackUrl') || '/';
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -58,14 +58,13 @@ export default function LoginForm() {
                         const res = await signIn('credentials', {
                             redirect: false,
                             email: values.email,
-                            password: values.password,
-                            callbackUrl
+                            password: values.password
                         });
 
                         if (res?.error) {
                             setError('Invalid email or password');
                         } else if (res?.ok) {
-                            router.replace(callbackUrl);
+                            router.replace('/');
                         }
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     } catch (err) {
@@ -148,7 +147,7 @@ export default function LoginForm() {
                 <Button
                     variant="outlined"
                     fullWidth
-                    onClick={() => signIn('google', { callbackUrl })}
+                    onClick={() => signIn('google')}
                     startIcon={<GoogleIcon />}
                     sx={{ py: 1.5 }}
                 >
