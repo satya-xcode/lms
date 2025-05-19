@@ -1,23 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import AccessRestricted from '@/components/AccessRestricted';
+import LoadingProgress from '@/components/LoadingProgress';
 import PendingLeaveRequests from '@/components/PendingLeaveRequests';
+import { useManager } from '@/hooks/useManager';
 
-import { fetcher } from '@/lib/fetcher';
 import { Typography, Card, CardContent, Box } from '@mui/material';
 import { useSession } from 'next-auth/react';
-import useSWR from 'swr';
+import { useRouter } from 'next/navigation';
 
 export default function ManagerDashboard() {
-    const { data } = useSession();
-    console.log('Session', data)
-    const managerId = data?.user?.id;
-    const { data: pendingRequests, isLoading, error } = useSWR(`/api/leave/requests/pending?managerId=${managerId}`, fetcher);
-    console.log(
-        "pendingRequests: ", pendingRequests,
-    )
-    if (!data) {
-        return <div>Unauthorized</div>;
+    const router = useRouter()
+    const { status, data }: any = useSession({
+        required: true,
+        onUnauthenticated() {
+            router.push('/unauthorized');
+        },
+    })
+
+    const { data: pendingRequests, isLoading } = useManager({ managerId: data?.user?.id })
+
+
+    if (status === 'loading') {
+        return <LoadingProgress />
+    }
+    if (data?.user?.role !== 'manager') {
+        return (
+            <AccessRestricted />
+        )
     }
 
     return (

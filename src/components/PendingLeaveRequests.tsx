@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { useManager } from '@/hooks/useManager';
 import {
     Table,
     TableBody,
@@ -14,7 +15,7 @@ import {
     Alert,
     CircularProgress
 } from '@mui/material';
-import { useLeaveMutations } from '@/hooks/useMutateApi';
+
 import { useState } from 'react';
 
 export default function PendingLeaveRequests({ requests }: { requests: any }) {
@@ -24,7 +25,7 @@ export default function PendingLeaveRequests({ requests }: { requests: any }) {
         success: string | null;
     }>({ loading: false, error: null, success: null });
 
-    const { approveLeaveRequest, rejectLeaveRequest } = useLeaveMutations();
+    const { approveLeaveRequest, rejectLeaveRequest, isLoading } = useManager({});
 
     const handleAction = async (requestId: string, action: 'approve' | 'reject') => {
         setActionState({ loading: true, error: null, success: null });
@@ -83,17 +84,17 @@ export default function PendingLeaveRequests({ requests }: { requests: any }) {
                                     <Button
                                         color="success"
                                         onClick={() => handleAction(request._id, 'approve')}
-                                        disabled={actionState.loading}
-                                        startIcon={actionState.loading ? <CircularProgress size={20} /> : null}
+                                        disabled={isLoading}
+                                        startIcon={isLoading ? <CircularProgress size={20} /> : null}
                                     >
                                         Approve
                                     </Button>
                                     <Button
                                         color="error"
                                         onClick={() => handleAction(request._id, 'reject')}
-                                        disabled={actionState.loading}
+                                        disabled={isLoading}
                                         sx={{ ml: 1 }}
-                                        startIcon={actionState.loading ? <CircularProgress size={20} /> : null}
+                                        startIcon={isLoading ? <CircularProgress size={20} /> : null}
                                     >
                                         Reject
                                     </Button>

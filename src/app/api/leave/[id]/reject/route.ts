@@ -11,13 +11,12 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     const leaveRequest = await LeaveRequest.findById(params.id);
 
-    if (!leaveRequest || !session ||
-        leaveRequest.manager.toString() !== session.user.id) {
+    if (!leaveRequest || !session || leaveRequest?.manager?.toString() !== String(session?.user?.id)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     leaveRequest.status = 'rejected';
     await leaveRequest.save();
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, message: 'Leave reject okay' });
 }

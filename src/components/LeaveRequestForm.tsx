@@ -11,7 +11,8 @@ import {
 } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { useLeaveMutations } from '@/hooks/useMutateApi';
+// import { useLeaveMutations } from '@/hooks/useMutateApi';
+import { useStaffLeaveRequests } from '@/hooks/useStaffLeaveRequests';
 
 export default function LeaveRequestForm() {
     const [reason, setReason] = useState('');
@@ -21,7 +22,8 @@ export default function LeaveRequestForm() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
 
-    const { createLeaveRequest } = useLeaveMutations();
+    // const { createLeaveRequest } = useLeaveMutations();
+    const { createStaffLeaveRequest } = useStaffLeaveRequests({})
 
     const handleSubmit = async () => {
         if (!reason || !startDate || !endDate) {
@@ -34,7 +36,7 @@ export default function LeaveRequestForm() {
         setSuccess(false);
 
         try {
-            await createLeaveRequest({
+            await createStaffLeaveRequest({
                 reason,
                 startDate,
                 endDate

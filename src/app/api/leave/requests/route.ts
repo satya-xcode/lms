@@ -11,53 +11,58 @@ import { authOptions } from '@/lib/auth/authOptions';
 
 export async function GET(req: Request) {
     await connectToDB();
+
     const session: any = await getServerSession(authOptions);
     const { searchParams } = new URL(req.url);
 
     if (!session) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     try {
-        let query: any = {};
 
-        // Staff-specific requests
         const staffId = searchParams.get('staffId');
-        console.log('StaffId', staffId)
         if (staffId) {
-            if (session.user.id !== staffId && session.user.role !== 'admin') {
-                return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+            if (session?.user?.id == staffId && session?.user?.role == 'staff') {
+                const requests = await LeaveRequest.find({ staff: staffId, status: 'pending' })
+                    .populate('staff', 'name email department')
+                    .populate('manager', 'name email')
+                    .sort({ createdAt: -1 });
+                return NextResponse.json(
+                    { data: requests, message: 'Fetched staff pending requests' },
+                    { status: 200 }
+                );
+            } else {
+                return NextResponse.json({ error: 'Unauthorized access to staff data' }, { status: 403 });
             }
-            query.staff = staffId;
         }
 
-        // Manager's pending requests
         const managerId = searchParams.get('managerId');
-        console.log('managerId', managerId)
         if (managerId) {
-            if (session.user.id !== managerId && session.user.role !== 'admin') {
-                return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+
+            if (session?.user?.id == managerId && session?.user?.role == 'manager') {
+                const requests = await LeaveRequest.find({ manager: managerId, status: 'pending' })
+                    .populate('staff', 'name email department')
+                    .populate('manager', 'name email')
+                    .sort({ createdAt: -1 });
+
+                return NextResponse.json(
+                    { data: requests, message: 'Fetched manager pending requests' },
+                    { status: 200 }
+                );
+            } else {
+                return NextResponse.json({ error: 'Unauthorized access to manager data' }, { status: 403 });
             }
-            query.manager = managerId;
-            query.status = 'pending';
         }
 
-        console.log('QueryData', query)
 
-        const requests = await LeaveRequest.find(query)
-            .populate('staff', 'name email department')
-            .populate('manager', 'name email')
-            .sort({ createdAt: -1 });
-
-        return NextResponse.json(requests);
     } catch (error: any) {
         return NextResponse.json(
-            { error: 'Internal server error' + error },
+            { error: 'Internal server error', details: error.message },
             { status: 500 }
         );
     }
 }
-
 
 export async function POST(req: Request) {
     await connectToDB();
