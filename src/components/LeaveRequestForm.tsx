@@ -54,6 +54,9 @@ export default function LeaveRequestForm() {
                             startDate: values.startDate,
                             endDate: values.endDate
                         });
+
+                        // console.log('Res', res)
+
                         setSubmitStatus({ success: true });
                         resetForm();
                     } catch (error: any) {

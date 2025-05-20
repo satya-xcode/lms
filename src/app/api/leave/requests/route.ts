@@ -114,7 +114,7 @@ export async function POST(req: Request) {
             });
         }
 
-        return NextResponse.json({ success: true, leaveRequest }, { status: 201 });
+        return NextResponse.json({ message: 'Leave submitted successfully' }, { status: 201 });
 
     } catch (error: unknown) {
         const err = error as Error;
