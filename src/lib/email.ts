@@ -1,38 +1,38 @@
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD
-    }
+  service: 'gmail',
+  auth: {
+    user: 'satyaxcode@gmail.com',
+    pass: 'kbnb plkn stia obco'
+  }
 });
 
 interface SendLeaveRequestEmailParams {
-    to: string;
-    staffName: string;
-    requestId: string;
-    reason: string;
-    startDate: string;
-    endDate: string;
+  to: string;
+  staffName: string;
+  requestId: string;
+  reason: string;
+  startDate: string;
+  endDate: string;
 }
 
 export async function sendLeaveRequestEmail({
-    to,
-    staffName,
-    requestId,
-    reason,
-    startDate,
-    endDate
+  to,
+  staffName,
+  requestId,
+  reason,
+  startDate,
+  endDate
 }: SendLeaveRequestEmailParams) {
-    const approveLink = `${process.env.NEXTAUTH_URL}/api/leave/${requestId}/approve`;
-    const rejectLink = `${process.env.NEXTAUTH_URL}/api/leave/${requestId}/reject`;
+  const approveLink = `https://lms-liard-two.vercel.app/api/leave/${requestId}/approve`;
+  const rejectLink = `https://lms-liard-two.vercel.app/api/leave/${requestId}/reject`;
 
-    await transporter.sendMail({
-        from: 'leave-management@tianyinworldtech.com',
-        to,
-        subject: `Leave Request from ${staffName}`,
-        html: `
+  await transporter.sendMail({
+    from: 'leave-management@tianyinworldtech.com',
+    to,
+    subject: `Leave Request from ${staffName}`,
+    html: `
       <div>
         <h2>Leave Request Notification</h2>
         <p>You have received a leave request from ${staffName}:</p>
@@ -44,5 +44,5 @@ export async function sendLeaveRequestEmail({
         </div>
       </div>
     `
-    });
+  });
 }

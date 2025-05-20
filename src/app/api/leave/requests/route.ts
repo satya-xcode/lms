@@ -86,10 +86,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Staff not found' }, { status: 404 });
         }
 
-        // Optional: Enforce leave balance
-        // if (staff.leaveBalance < 1) {
-        //     return NextResponse.json({ error: 'No leave balance remaining' }, { status: 400 });
-        // }
+
 
         const leaveRequest = new LeaveRequest({
             staff: staff._id,
