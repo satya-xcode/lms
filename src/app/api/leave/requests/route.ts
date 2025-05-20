@@ -66,42 +66,62 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-    await connectToDB();
-    const session: any = await getServerSession(authOptions);
+    try {
+        await connectToDB();
+        const session: any = await getServerSession(authOptions);
 
-    if (!session || session.user.role !== 'staff') {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        if (!session || session.user.role !== 'staff') {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        const { reason, startDate, endDate } = await req.json();
+
+        if (!reason || !startDate || !endDate) {
+            return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
+        }
+
+        const staff = await User.findById(session.user.id);
+
+        if (!staff) {
+            return NextResponse.json({ error: 'Staff not found' }, { status: 404 });
+        }
+
+        // Optional: Enforce leave balance
+        // if (staff.leaveBalance < 1) {
+        //     return NextResponse.json({ error: 'No leave balance remaining' }, { status: 400 });
+        // }
+
+        const leaveRequest = new LeaveRequest({
+            staff: staff._id,
+            manager: staff.manager,
+            reason,
+            startDate: new Date(startDate),
+            endDate: new Date(endDate),
+        });
+
+        await leaveRequest.save();
+
+        // Notify manager
+        const manager = await User.findById(staff.manager);
+        if (manager) {
+            await sendLeaveRequestEmail({
+                to: manager.email,
+                staffName: staff.name,
+                requestId: leaveRequest._id.toString(),
+                reason,
+                startDate: new Date(startDate).toLocaleDateString(),
+                endDate: new Date(endDate).toLocaleDateString(),
+            });
+        }
+
+        return NextResponse.json({ success: true, leaveRequest }, { status: 201 });
+
+    } catch (error: unknown) {
+        const err = error as Error;
+        console.error("Leave request creation failed:", err.message);
+        return NextResponse.json(
+            { error: 'Internal server error', details: err.message },
+            { status: 500 }
+        );
     }
-
-    const { reason, startDate, endDate } = await req.json();
-
-    // Check leave balance
-    const staff = await User.findById(session.user.id);
-    // if (staff.leaveBalance < 1) {
-    //     return NextResponse.json({ error: 'No leave balance remaining' }, { status: 400 });
-    // }
-
-    // Create leave request
-    const leaveRequest = new LeaveRequest({
-        staff: staff._id,
-        manager: staff.manager,
-        reason,
-        startDate: new Date(startDate),
-        endDate: new Date(endDate)
-    });
-
-    await leaveRequest.save();
-
-    // Send email notification
-    const manager = await User.findById(staff.manager);
-    await sendLeaveRequestEmail({
-        to: manager.email,
-        staffName: staff.name,
-        requestId: leaveRequest._id.toString(),
-        reason,
-        startDate: new Date(startDate).toLocaleDateString(),
-        endDate: new Date(endDate).toLocaleDateString()
-    });
-
-    return NextResponse.json({ success: true, leaveRequest });
 }
