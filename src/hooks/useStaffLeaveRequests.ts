@@ -1,20 +1,21 @@
+'use client'
 import axios from "axios";
 import { useCallback, useMemo } from "react";
 import useSWR from "swr";
 
 type CreateLeaveRequestInput = {
-    startDate: Date;
-    endDate: Date;
-    reason: string;
+    startDate?: Date;
+    endDate?: Date;
+    reason?: string;
     // add more fields as needed
 };
 
-export const useStaffLeaveRequests = ({ staffId }: { staffId?: string }) => {
-    const shouldFetch = Boolean(staffId);
+export const useStaffLeaveRequests = ({ staffId, status }: { staffId?: string, status?: string }) => {
+    const shouldFetch = Boolean(staffId) && Boolean(status);
 
     const key = useMemo(() => (
-        shouldFetch ? `/api/leave/requests?staffId=${staffId}` : null
-    ), [staffId, shouldFetch]);
+        shouldFetch ? `/api/leave/requests?staffId=${staffId}&status=${status}` : null
+    ), [shouldFetch, staffId, status]);
 
     const { data, error, isLoading, mutate } = useSWR(key);
 

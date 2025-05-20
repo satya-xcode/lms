@@ -1,4 +1,4 @@
-/* eslint-disable prefer-const */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
@@ -22,9 +22,10 @@ export async function GET(req: Request) {
     try {
 
         const staffId = searchParams.get('staffId');
-        if (staffId) {
+        const status = searchParams.get('status')
+        if (staffId && status) {
             if (session?.user?.id == staffId && session?.user?.role == 'staff') {
-                const requests = await LeaveRequest.find({ staff: staffId, status: 'pending' })
+                const requests = await LeaveRequest.find({ staff: staffId, status: status })
                     .populate('staff', 'name email department')
                     .populate('manager', 'name email')
                     .sort({ createdAt: -1 });
@@ -76,9 +77,9 @@ export async function POST(req: Request) {
 
     // Check leave balance
     const staff = await User.findById(session.user.id);
-    if (staff.leaveBalance < 1) {
-        return NextResponse.json({ error: 'No leave balance remaining' }, { status: 400 });
-    }
+    // if (staff.leaveBalance < 1) {
+    //     return NextResponse.json({ error: 'No leave balance remaining' }, { status: 400 });
+    // }
 
     // Create leave request
     const leaveRequest = new LeaveRequest({

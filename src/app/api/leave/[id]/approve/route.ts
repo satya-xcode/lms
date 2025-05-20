@@ -10,7 +10,7 @@ import { authOptions } from '@/lib/auth/authOptions';
 export async function POST(req: Request, { params }: { params: { id: string } }) {
     await connectToDB();
 
-    const { id } = params;
+    const { id } = await params;
     const session: any = await getServerSession(authOptions);
 
     if (!session || !session.user) {

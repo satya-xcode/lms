@@ -1,99 +1,138 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-
-import { useState } from 'react';
+import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
 import {
     TextField,
     Button,
     Stack,
     Typography,
-    Alert
+    Alert,
 } from '@mui/material';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { DatePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-// import { useLeaveMutations } from '@/hooks/useMutateApi';
 import { useStaffLeaveRequests } from '@/hooks/useStaffLeaveRequests';
+import { useState } from 'react';
+
+const validationSchema = Yup.object().shape({
+    reason: Yup.string()
+        .required('Reason is required')
+        .min(4, 'Reason must be at least 4 characters'),
+    startDate: Yup.date()
+        .required('Start date is required')
+        .typeError('Please enter a valid date'),
+    endDate: Yup.date()
+        .required('End date is required')
+        .min(
+            Yup.ref('startDate'),
+            'End date must be after start date'
+        )
+        .typeError('Please enter a valid date')
+});
 
 export default function LeaveRequestForm() {
-    const [reason, setReason] = useState('');
-    const [startDate, setStartDate] = useState<Date | null>(null);
-    const [endDate, setEndDate] = useState<Date | null>(null);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState(false);
-
-    // const { createLeaveRequest } = useLeaveMutations();
-    const { createStaffLeaveRequest } = useStaffLeaveRequests({})
-
-    const handleSubmit = async () => {
-        if (!reason || !startDate || !endDate) {
-            setError('All fields are required');
-            return;
-        }
-
-        setIsSubmitting(true);
-        setError('');
-        setSuccess(false);
-
-        try {
-            await createStaffLeaveRequest({
-                reason,
-                startDate,
-                endDate
-            });
-            setSuccess(true);
-            setReason('');
-            setStartDate(null);
-            setEndDate(null);
-        } catch (err: any) {
-            setError(err.message || 'Failed to submit leave request');
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+    const { createStaffLeaveRequest } = useStaffLeaveRequests({});
+    const [submitStatus, setSubmitStatus] = useState<{
+        error?: string;
+        success?: boolean;
+    }>({});
 
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <Stack spacing={3}>
-                <Typography variant="h6">Request Leave</Typography>
+            <Formik
+                initialValues={{
+                    reason: '',
+                    startDate: new Date,
+                    endDate: new Date
+                }}
+                validationSchema={validationSchema}
+                onSubmit={async (values, { resetForm, setSubmitting }) => {
+                    try {
+                        await createStaffLeaveRequest({
+                            reason: values.reason,
+                            startDate: values.startDate,
+                            endDate: values.endDate
+                        });
+                        setSubmitStatus({ success: true });
+                        resetForm();
+                    } catch (error: any) {
+                        setSubmitStatus({
+                            error: error.message || 'Failed to submit leave request'
+                        });
+                    } finally {
+                        setSubmitting(false);
+                    }
+                }}
+            >
+                {({
+                    values,
+                    errors,
+                    touched,
+                    handleSubmit,
+                    isSubmitting,
+                    setFieldValue,
+                }) => (
+                    <Form onSubmit={handleSubmit}>
+                        <Stack spacing={3}>
+                            <Typography variant="body1" color='textSecondary'>Request Leave</Typography>
 
-                {error && (
-                    <Alert severity="error">{error}</Alert>
+                            {submitStatus.error && (
+                                <Alert severity="error">{submitStatus.error}</Alert>
+                            )}
+
+                            {submitStatus.success && (
+                                <Alert severity="success">
+                                    Leave request submitted successfully!
+                                </Alert>
+                            )}
+
+                            <Field
+                                as={TextField}
+                                name="reason"
+                                label="Reason for Leave"
+                                multiline
+                                rows={4}
+                                fullWidth
+                                error={touched.reason && Boolean(errors.reason)}
+                                helperText={touched.reason && errors.reason}
+                            />
+
+                            <DatePicker
+                                label="Start Date"
+                                value={values.startDate}
+                                onChange={(newValue) => setFieldValue('startDate', newValue)}
+                                slotProps={{
+                                    textField: {
+                                        error: touched.startDate && Boolean(errors.startDate),
+                                        helperText: Boolean(touched.startDate) && Boolean(errors.startDate),
+                                    },
+                                }}
+                            />
+
+                            <DatePicker
+                                label="End Date"
+                                value={values.endDate}
+                                onChange={(newValue) => setFieldValue('endDate', newValue)}
+                                slotProps={{
+                                    textField: {
+                                        error: touched.endDate && Boolean(errors.endDate),
+                                        helperText: Boolean(touched.endDate) && Boolean(errors.endDate),
+                                    },
+                                }}
+                            />
+
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? 'Submitting...' : 'Submit Request'}
+                            </Button>
+                        </Stack>
+                    </Form>
                 )}
-
-                {success && (
-                    <Alert severity="success">Leave request submitted successfully!</Alert>
-                )}
-
-                <TextField
-                    label="Reason for Leave"
-                    multiline
-                    rows={4}
-                    value={reason}
-                    onChange={(e) => setReason(e.target.value)}
-                    fullWidth
-                />
-
-                <DatePicker
-                    label="Start Date"
-                    value={startDate}
-                    onChange={(newValue) => setStartDate(newValue)}
-                />
-
-                <DatePicker
-                    label="End Date"
-                    value={endDate}
-                    onChange={(newValue) => setEndDate(newValue)}
-                />
-
-                <Button
-                    variant="contained"
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                >
-                    {isSubmitting ? 'Submitting...' : 'Submit Request'}
-                </Button>
-            </Stack>
+            </Formik>
         </LocalizationProvider>
     );
 }

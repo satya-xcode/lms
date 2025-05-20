@@ -8,7 +8,8 @@ function SignOutButton() {
         <Button
             variant="contained"
             color='error'
-            onClick={() => signOut({ redirect: false, callbackUrl: '/' })}
+            size='large'
+            onClick={() => signOut({ redirect: true, callbackUrl: '/' })}
         >
             Sign Out
         </Button>

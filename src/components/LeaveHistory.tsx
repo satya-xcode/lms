@@ -31,7 +31,7 @@ interface LeaveHistoryProps {
 
 export default function LeaveHistory({ leaves }: LeaveHistoryProps) {
     if (leaves.length === 0) {
-        return <Typography>No leave history found</Typography>;
+        return <Typography variant='body1' color='error'>No leave history found</Typography>;
     }
 
     const getStatusColor = (status: string) => {
@@ -46,7 +46,7 @@ export default function LeaveHistory({ leaves }: LeaveHistoryProps) {
     };
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} variant='outlined'>
             <Table>
                 <TableHead>
                     <TableRow>

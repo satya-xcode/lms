@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // app/page.tsx
 'use client'
-import { Button, Container, Typography, Box } from '@mui/material';
+import { Button, Container, Typography, Box, Stack, Skeleton, Card, CardContent } from '@mui/material';
 import Link from 'next/link';
 import SignOutButton from '@/components/SignOutButton';
 import { useSession } from 'next-auth/react';
-import LoadingProgress from '@/components/LoadingProgress';
 
 export default function Home() {
   const { data: session, status }: any = useSession();
@@ -13,7 +12,15 @@ export default function Home() {
   // Loading state with proper skeleton structure
   if (status === 'loading') {
     return (
-      <LoadingProgress />
+
+      <Stack spacing={1} justifyContent={'center'} height={'80vh'} alignItems={'center'}>
+        <Container component={Card} maxWidth='sm' sx={{ p: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
+          <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
+          <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
+          <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
+        </Container>
+      </Stack>
     )
   }
 
@@ -29,22 +36,33 @@ export default function Home() {
         gap: 3,
         textAlign: 'center'
       }}>
-        <Typography variant="h4" component="h1">
-          Welcome to Tianyin&apos;s LMS!
-        </Typography>
-        <Typography variant="body1">
-          Please sign in to access your account
-        </Typography>
-        <Button
-          variant="contained"
-          size="large"
-          fullWidth
-          component={Link}
-          href="/login"
-          sx={{ mt: 2 }}
-        >
-          Login Now
-        </Button>
+
+        <Card component={Container} maxWidth='sm'>
+          <CardContent>
+            <Stack spacing={4}>
+
+              <Typography variant="h4" component="h1">
+                Welcome to Tianyin&apos;s LMS!
+              </Typography>
+              <Typography variant="body1">
+                Please sign in to access your account
+              </Typography>
+              <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                component={Link}
+                href="/login"
+                sx={{ mt: 2 }}
+              >
+                Login Now
+              </Button>
+
+            </Stack>
+          </CardContent>
+        </Card>
+
+
       </Container>
     );
   }
@@ -60,62 +78,74 @@ export default function Home() {
       gap: 3,
       textAlign: 'center'
     }}>
-      <Typography variant="h4" component="h1">
-        Welcome to Tianyin&apos;s LMS!
-      </Typography>
 
-      <Typography variant="body1">
-        You&apos;re logged in as: <strong>{session.user?.email}</strong>
-      </Typography>
+      <Card component={Container} maxWidth='sm'>
+        <CardContent>
+          <Stack spacing={4}>
+            <Typography variant="h4" component="h1">
+              Welcome to Tianyin&apos;s LMS!
+            </Typography>
 
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
-        width: '100%',
-        mt: 2
-      }}>
-        {session.user?.role === 'admin' && (
-          <Button
-            variant="contained"
-            size="large"
-            fullWidth
-            component={Link}
-            href="/admin"
-            sx={{ py: 1.5 }}
-          >
-            Go to Admin Dashboard
-          </Button>
-        )}
+            <Typography variant="body1">
+              You&apos;re logged in as: <strong>{session.user?.email}</strong>
+            </Typography>
 
-        {session.user?.role === 'manager' && (
-          <Button
-            variant="contained"
-            size="large"
-            fullWidth
-            component={Link}
-            href="/manager"
-            sx={{ py: 1.5 }}
-          >
-            Go to Manager Portal
-          </Button>
-        )}
+            <Box sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+              width: '100%',
+              mt: 2
+            }}>
+              {session.user?.role === 'admin' && (
+                <Button
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  component={Link}
+                  href="/admin"
+                  sx={{ py: 1.5 }}
+                >
+                  Go to Admin Dashboard
+                </Button>
+              )}
 
-        {session.user?.role === 'staff' && (
-          <Button
-            variant="contained"
-            size="large"
-            fullWidth
-            component={Link}
-            href="/staff"
-            sx={{ py: 1.5 }}
-          >
-            Go to Staff Portal
-          </Button>
-        )}
+              {session.user?.role === 'manager' && (
+                <Button
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  component={Link}
+                  href="/manager"
+                  sx={{ py: 1.5 }}
+                >
+                  Go to Manager Portal
+                </Button>
+              )}
 
-        <SignOutButton />
-      </Box>
+              {session.user?.role === 'staff' && (
+                <Button
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  component={Link}
+                  href="/staff"
+                  sx={{}}
+                >
+                  Go to Staff Portal
+                </Button>
+              )}
+
+              <SignOutButton />
+            </Box>
+
+          </Stack>
+
+
+        </CardContent>
+      </Card>
+
+
     </Container>
   );
 }

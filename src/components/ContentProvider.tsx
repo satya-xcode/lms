@@ -1,6 +1,6 @@
 'use client'
 import theme from '@/theme/theme'
-import { Container, CssBaseline, ThemeProvider } from '@mui/material'
+import { Container, CssBaseline, ThemeProvider, Toolbar } from '@mui/material'
 import React from 'react'
 import Navbar from './Navbar'
 import { SessionProvider } from 'next-auth/react'
@@ -20,7 +20,8 @@ function ContentProvider({ children }: { children: React.ReactNode }) {
                 <ThemeProvider theme={theme}>
                     <CssBaseline />
                     <Navbar />
-                    <Container maxWidth={false} sx={{ py: 4 }}>
+                    <Toolbar />
+                    <Container maxWidth={false} sx={{ py: 2 }}>
                         {children}
                     </Container>
                 </ThemeProvider>

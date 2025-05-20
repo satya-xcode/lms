@@ -1,55 +1,36 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import AccessRestricted from '@/components/AccessRestricted';
-import LoadingProgress from '@/components/LoadingProgress';
 import PendingLeaveRequests from '@/components/PendingLeaveRequests';
 import { useManager } from '@/hooks/useManager';
-
-import { Typography, Card, CardContent, Box } from '@mui/material';
+import { Card, CardContent, Stack, Skeleton } from '@mui/material';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 
 export default function ManagerDashboard() {
-    const router = useRouter()
-    const { status, data }: any = useSession({
-        required: true,
-        onUnauthenticated() {
-            router.push('/unauthorized');
-        },
-    })
-
+    const { data }: any = useSession()
     const { data: pendingRequests, isLoading } = useManager({ managerId: data?.user?.id })
 
-
-    if (status === 'loading') {
-        return <LoadingProgress />
-    }
-    if (data?.user?.role !== 'manager') {
-        return (
-            <AccessRestricted />
-        )
-    }
-
     return (
-        <Box sx={{ p: 3 }}>
-            <Typography variant="h4" gutterBottom>
-                Manager Dashboard
-            </Typography>
+        <>
 
-            <Card>
+            <Card variant='outlined'>
                 <CardContent>
-                    <Typography variant="h6" gutterBottom>
+                    {/* <Typography variant="h6" gutterBottom>
                         Pending Leave Requests
-                    </Typography>
+                    </Typography> */}
                     {isLoading ? (
-                        <Typography>Loading...</Typography>
+                        <Stack spacing={1}>
+                            <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
+                            <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
+                            <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
+                            <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
+                        </Stack>
                     ) : (
                         <PendingLeaveRequests requests={pendingRequests || []} />
                     )}
                 </CardContent>
             </Card>
-        </Box>
+        </>
     );
 }
 
