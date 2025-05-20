@@ -7,7 +7,7 @@ import User from '@/models/User';
 import { connectToDB } from '@/lib/mongoose';
 import { authOptions } from '@/lib/auth/authOptions';
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: any }) {
     await connectToDB();
 
     const { id } = await params;
