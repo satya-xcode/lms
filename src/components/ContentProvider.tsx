@@ -15,7 +15,7 @@ function ContentProvider({ children }: { children: React.ReactNode }) {
                 revalidateIfStale: true,
                 revalidateOnFocus: true,
                 revalidateOnReconnect: true,
-                refreshInterval: 1000, // Revalidate every 2 seconds
+                refreshInterval: 1000
             }}>
                 <ThemeProvider theme={theme}>
                     <CssBaseline />

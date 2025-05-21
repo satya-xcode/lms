@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useManager } from '@/hooks/useManager';
+import { Cancel, CheckCircle } from '@mui/icons-material';
 import {
     Table,
     TableBody,
@@ -13,7 +15,7 @@ import {
     Button,
     Typography,
     Alert,
-    CircularProgress
+
 } from '@mui/material';
 import { useState } from 'react';
 
@@ -23,40 +25,16 @@ type RequestAction = {
 } | null;
 
 export default function PendingLeaveRequests({ requests }: { requests: any }) {
+    const [loadingId, setLoadingId] = useState<string | null>(null);
+
     const [actionState, setActionState] = useState<{
         currentAction: RequestAction;
         error: string | null;
         success: string | null;
     }>({ currentAction: null, error: null, success: null });
 
-    const { approveLeaveRequest, rejectLeaveRequest } = useManager({});
+    const { approveLeaveRequest, rejectLeaveRequest, isLoading } = useManager({});
 
-    const handleAction = async (requestId: string, actionType: 'approve' | 'reject') => {
-        setActionState({
-            currentAction: { requestId, actionType },
-            error: null,
-            success: null
-        });
-
-        try {
-            if (actionType === 'approve') {
-                await approveLeaveRequest(requestId);
-            } else {
-                await rejectLeaveRequest(requestId);
-            }
-            setActionState({
-                currentAction: null,
-                error: null,
-                success: `Leave request ${actionType}d successfully`
-            });
-        } catch (err: any) {
-            setActionState({
-                currentAction: null,
-                error: err.message || `Failed to ${actionType} leave request`,
-                success: null
-            });
-        }
-    };
 
     if (requests.length === 0) {
         return <Typography color='error' variant='body2'>No pending leave requests</Typography>;
@@ -88,8 +66,30 @@ export default function PendingLeaveRequests({ requests }: { requests: any }) {
                     </TableHead>
                     <TableBody>
                         {requests.map((request: any) => {
-                            const isProcessing = actionState.currentAction?.requestId === request._id;
-                            const processingAction = actionState.currentAction?.actionType;
+
+                            async function onApprovedHandler(_id: string) {
+                                setLoadingId(_id);
+                                try {
+                                    await approveLeaveRequest(_id);
+                                    setActionState({ currentAction: null, error: null, success: 'Leave approved successfully' });
+                                } catch (err) {
+                                    setActionState({ currentAction: null, error: 'Failed to approve leave', success: null });
+                                } finally {
+                                    setLoadingId(null);
+                                }
+                            }
+
+                            async function onRejectedHandler(_id: any): Promise<void> {
+                                setLoadingId(_id);
+                                try {
+                                    await rejectLeaveRequest(_id);
+                                    setActionState({ currentAction: null, error: null, success: 'Leave rejected successfully' });
+                                } catch (err) {
+                                    setActionState({ currentAction: null, error: 'Failed to  leave', success: null });
+                                } finally {
+                                    setLoadingId(null);
+                                }
+                            }
 
                             return (
                                 <TableRow key={request._id}>
@@ -103,24 +103,19 @@ export default function PendingLeaveRequests({ requests }: { requests: any }) {
                                     <TableCell>
                                         <Button
                                             color="success"
-                                            onClick={() => handleAction(request._id, 'approve')}
-                                            disabled={isProcessing}
-                                            startIcon={
-                                                isProcessing && processingAction === 'approve' ?
-                                                    <CircularProgress size={20} /> : null
-                                            }
+                                            onClick={() => onApprovedHandler(request._id)}
+                                            // disabled={isProcessing}
+                                            loading={loadingId === request._id}
+                                            startIcon={<CheckCircle sx={{ color: '#34C759' }} />}
                                         >
                                             Approve
                                         </Button>
                                         <Button
                                             color="error"
-                                            onClick={() => handleAction(request._id, 'reject')}
-                                            disabled={isProcessing}
+                                            onClick={() => onRejectedHandler(request._id)}
+                                            // disabled={isProcessing}
                                             sx={{ ml: 1 }}
-                                            startIcon={
-                                                isProcessing && processingAction === 'reject' ?
-                                                    <CircularProgress size={20} /> : null
-                                            }
+                                            startIcon={<Cancel sx={{ color: '#FF3B3F' }} />}
                                         >
                                             Reject
                                         </Button>
