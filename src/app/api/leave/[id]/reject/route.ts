@@ -5,7 +5,7 @@ import LeaveRequest from '@/models/LeaveRequest';
 import { connectToDB } from '@/lib/mongoose';
 import { authOptions } from '@/lib/auth/authOptions';
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: { params: any }) {
     try {
         await connectToDB();
 
