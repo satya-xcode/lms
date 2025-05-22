@@ -15,43 +15,52 @@ import {
     Button,
     Typography,
     Alert,
+    CircularProgress,
 
 } from '@mui/material';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
-type RequestAction = {
+type LoadingState = {
     requestId: string;
     actionType: 'approve' | 'reject';
 } | null;
 
 export default function PendingLeaveRequests({ requests }: { requests: any }) {
-    const [loadingId, setLoadingId] = useState<string | null>(null);
-
-    const [actionState, setActionState] = useState<{
-        currentAction: RequestAction;
-        error: string | null;
-        success: string | null;
-    }>({ currentAction: null, error: null, success: null });
+    const [loadingState, setLoadingState] = useState<LoadingState>(null);
 
     const { approveLeaveRequest, rejectLeaveRequest, isLoading } = useManager({});
 
+    async function handleAction(_id: string, actionType: 'approve' | 'reject') {
+        setLoadingState({ requestId: _id, actionType });
+
+        try {
+            if (actionType === 'approve') {
+                await approveLeaveRequest(_id);
+                const res: any = await approveLeaveRequest(_id);
+                toast.success(res.message, { richColors: true })
+
+            } else {
+                const res: any = await rejectLeaveRequest(_id);
+                toast.success(res.message, { richColors: true })
+
+            }
+        } catch (err: any) {
+            toast.error(err?.message || 'Something went wrong', { richColors: true })
+
+        } finally {
+            setLoadingState(null);
+        }
+    }
 
     if (requests.length === 0) {
         return <Typography color='error' variant='body2'>No pending leave requests</Typography>;
     }
 
+
+
     return (
         <>
-            {actionState.error && (
-                <Alert severity="error" sx={{ mb: 2 }} onClose={() => setActionState(prev => ({ ...prev, error: null }))}>
-                    {actionState.error}
-                </Alert>
-            )}
-            {actionState.success && (
-                <Alert severity="success" sx={{ mb: 2 }} onClose={() => setActionState(prev => ({ ...prev, success: null }))}>
-                    {actionState.success}
-                </Alert>
-            )}
 
             <TableContainer component={Paper} variant='outlined'>
                 <Table>
@@ -66,30 +75,10 @@ export default function PendingLeaveRequests({ requests }: { requests: any }) {
                     </TableHead>
                     <TableBody>
                         {requests.map((request: any) => {
-
-                            async function onApprovedHandler(_id: string) {
-                                setLoadingId(_id);
-                                try {
-                                    await approveLeaveRequest(_id);
-                                    setActionState({ currentAction: null, error: null, success: 'Leave approved successfully' });
-                                } catch (err) {
-                                    setActionState({ currentAction: null, error: 'Failed to approve leave', success: null });
-                                } finally {
-                                    setLoadingId(null);
-                                }
-                            }
-
-                            async function onRejectedHandler(_id: any): Promise<void> {
-                                setLoadingId(_id);
-                                try {
-                                    await rejectLeaveRequest(_id);
-                                    setActionState({ currentAction: null, error: null, success: 'Leave rejected successfully' });
-                                } catch (err) {
-                                    setActionState({ currentAction: null, error: 'Failed to  leave', success: null });
-                                } finally {
-                                    setLoadingId(null);
-                                }
-                            }
+                            const isApproving = loadingState?.requestId === request._id &&
+                                loadingState?.actionType === 'approve';
+                            const isRejecting = loadingState?.requestId === request._id &&
+                                loadingState?.actionType === 'reject';
 
                             return (
                                 <TableRow key={request._id}>
@@ -103,18 +92,19 @@ export default function PendingLeaveRequests({ requests }: { requests: any }) {
                                     <TableCell>
                                         <Button
                                             color="success"
-                                            onClick={() => onApprovedHandler(request._id)}
-                                            // disabled={isProcessing}
-                                            loading={loadingId === request._id}
+                                            onClick={() => handleAction(request._id, 'approve')}
+                                            disabled={isApproving || isRejecting}
+                                            loading={isApproving}
                                             startIcon={<CheckCircle sx={{ color: '#34C759' }} />}
                                         >
                                             Approve
                                         </Button>
                                         <Button
                                             color="error"
-                                            onClick={() => onRejectedHandler(request._id)}
-                                            // disabled={isProcessing}
+                                            onClick={() => handleAction(request._id, 'reject')}
+                                            disabled={isApproving || isRejecting}
                                             sx={{ ml: 1 }}
+                                            loading={isRejecting}
                                             startIcon={<Cancel sx={{ color: '#FF3B3F' }} />}
                                         >
                                             Reject

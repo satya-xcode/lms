@@ -6,7 +6,7 @@ import Navbar from './Navbar'
 import { SessionProvider } from 'next-auth/react'
 import { SWRConfig } from 'swr'
 import { fetcher } from '@/lib/fetcher'
-
+import { Toaster } from 'sonner';
 function ContentProvider({ children }: { children: React.ReactNode }) {
     return (
         <SessionProvider>
@@ -24,6 +24,7 @@ function ContentProvider({ children }: { children: React.ReactNode }) {
                     <Container maxWidth={false} sx={{ py: 2 }}>
                         {children}
                     </Container>
+                    <Toaster expand position='top-center' />
                 </ThemeProvider>
             </SWRConfig>
         </SessionProvider>

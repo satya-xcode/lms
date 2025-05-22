@@ -7,13 +7,14 @@ import {
     Button,
     Stack,
     Typography,
-    Alert,
+
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useStaffLeaveRequests } from '@/hooks/useStaffLeaveRequests';
-import { useState } from 'react';
+
+import { toast } from 'sonner';
 
 const validationSchema = Yup.object().shape({
     reason: Yup.string()
@@ -33,10 +34,7 @@ const validationSchema = Yup.object().shape({
 
 export default function LeaveRequestForm() {
     const { createStaffLeaveRequest } = useStaffLeaveRequests({});
-    const [submitStatus, setSubmitStatus] = useState<{
-        error?: string;
-        success?: boolean;
-    }>({});
+
 
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -49,20 +47,18 @@ export default function LeaveRequestForm() {
                 validationSchema={validationSchema}
                 onSubmit={async (values, { resetForm, setSubmitting }) => {
                     try {
-                        await createStaffLeaveRequest({
+                        const res = await createStaffLeaveRequest({
                             reason: values.reason,
                             startDate: values.startDate,
                             endDate: values.endDate
                         });
 
                         // console.log('Res', res)
+                        toast.success(res?.message, { richColors: true })
 
-                        setSubmitStatus({ success: true });
                         resetForm();
                     } catch (error: any) {
-                        setSubmitStatus({
-                            error: error.message || 'Failed to submit leave request'
-                        });
+                        toast.error(error.message || 'Failed to submit leave request')
                     } finally {
                         setSubmitting(false);
                     }
@@ -79,16 +75,6 @@ export default function LeaveRequestForm() {
                     <Form onSubmit={handleSubmit}>
                         <Stack spacing={3}>
                             <Typography variant="body1" color='textSecondary'>Request Leave</Typography>
-
-                            {submitStatus.error && (
-                                <Alert severity="error">{submitStatus.error}</Alert>
-                            )}
-
-                            {submitStatus.success && (
-                                <Alert severity="success">
-                                    Leave request submitted successfully!
-                                </Alert>
-                            )}
 
                             <Field
                                 as={TextField}
@@ -129,8 +115,10 @@ export default function LeaveRequestForm() {
                                 type="submit"
                                 variant="contained"
                                 disabled={isSubmitting}
+                                loading={isSubmitting}
+                                loadingPosition='center'
                             >
-                                {isSubmitting ? 'Submitting...' : 'Submit Request'}
+                                Submit Request
                             </Button>
                         </Stack>
                     </Form>

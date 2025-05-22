@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import User from '@/models/User';
 import LeaveRequest from '@/models/LeaveRequest';
-import { sendLeaveRequestEmail } from '@/lib/email';
+// import { sendLeaveRequestEmail } from '@/lib/email';
 import { connectToDB } from '@/lib/mongoose';
 import { authOptions } from '@/lib/auth/authOptions';
 
@@ -99,17 +99,17 @@ export async function POST(req: Request) {
         await leaveRequest.save();
 
         // Notify manager
-        const manager = await User.findById(staff.manager);
-        if (manager) {
-            await sendLeaveRequestEmail({
-                to: manager.email,
-                staffName: staff.name,
-                requestId: leaveRequest._id.toString(),
-                reason,
-                startDate: new Date(startDate).toLocaleDateString(),
-                endDate: new Date(endDate).toLocaleDateString(),
-            });
-        }
+        // const manager = await User.findById(staff.manager);
+        // if (manager) {
+        //     await sendLeaveRequestEmail({
+        //         to: manager.email,
+        //         staffName: staff.name,
+        //         requestId: leaveRequest._id.toString(),
+        //         reason,
+        //         startDate: new Date(startDate).toLocaleDateString(),
+        //         endDate: new Date(endDate).toLocaleDateString(),
+        //     });
+        // }
 
         return NextResponse.json({ message: 'Leave submitted successfully' }, { status: 201 });
 

@@ -12,9 +12,9 @@ export const useManager = ({ managerId }: { managerId?: string }) => {
             // Optional: optimistic update
             const optimisticData = data?.data?.filter((req: any) => req._id !== requestId);
             mutate(optimisticData, false); // optimistic update (disable revalidation)
-
-            await axios.post(`/api/leave/${requestId}/approve`);
+            const response = await axios.post(`/api/leave/${requestId}/approve`);
             mutate(); // revalidate
+            return response.data;
         } catch (err) {
             mutate(); // fallback to original state
             throw err;
@@ -25,9 +25,9 @@ export const useManager = ({ managerId }: { managerId?: string }) => {
         try {
             const optimisticData = data?.data?.filter((req: any) => req._id !== requestId);
             mutate(optimisticData, false);
-
-            await axios.post(`/api/leave/${requestId}/reject`);
+            const response = await axios.post(`/api/leave/${requestId}/reject`);
             mutate(); // revalidate
+            return response.data;
         } catch (err) {
             mutate();
             throw err;
