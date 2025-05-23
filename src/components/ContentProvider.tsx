@@ -38,6 +38,12 @@ function ContentProvider({ children }: { children: React.ReactNode }) {
                             <Box
                                 sx={{
                                     height: '100%',
+                                    // margin: 'auto',
+                                    // alignItems: 'center',
+                                    // justifyContent: 'center',
+                                    // display: 'flex',
+                                    // flexDirection: 'column',
+                                    // alignContent: 'center',
                                     width: '100%',
                                     bgcolor: '#E0F2F1',
                                     overflowX: 'auto',

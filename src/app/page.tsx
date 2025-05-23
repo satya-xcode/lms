@@ -13,8 +13,8 @@ export default function Home() {
   if (status === 'loading') {
     return (
 
-      <Stack spacing={1}>
-        <Container component={Card} maxWidth='sm' sx={{ p: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Stack spacing={1} sx={{}}>
+        <Container component={Card} maxWidth='sm' sx={{ margin: 'auto', p: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
           <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
           <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
@@ -27,7 +27,7 @@ export default function Home() {
   // Error state (if session exists but is invalid)
   if (status === 'unauthenticated' || !session) {
     return (
-      <Card sx={{ maxWidth: 'sm' }}>
+      <Card sx={{ maxWidth: 'sm', margin: 'auto' }}>
         <CardContent>
           <Stack spacing={4}>
             <Typography variant="h4" component="h1">
@@ -56,7 +56,7 @@ export default function Home() {
 
   // Authenticated state
   return (
-    <Card sx={{ maxWidth: 'sm' }}>
+    <Card sx={{ maxWidth: 'sm', margin: 'auto' }}>
       <CardContent>
         <Stack spacing={4}>
           <Typography variant="h4" component="h1">
