@@ -1,5 +1,5 @@
 'use client'
-import { colors, createTheme, responsiveFontSizes } from '@mui/material';
+import { createTheme, responsiveFontSizes } from '@mui/material';
 
 // const darkSlateGrey = "rgb(38, 100, 100)"
 // const darkSeaGreen = 'rgb(143,188,143)'
@@ -9,8 +9,11 @@ const baseTheme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: colors.teal[600], // Professional blue
-
+      // main: '#009688', // Professional blue
+      main: '#009688',
+      dark: '#00695C',
+      light: '#B2DFDB',
+      contrastText: '#FFFFFF',
     },
     secondary: {
       main: '#ff4081', // Modern pink accent
@@ -18,8 +21,15 @@ const baseTheme = createTheme({
       light: '#ff79b0',
     },
     background: {
-      // default: '#1B262C',
-    }
+      default: '#F4F6F8',
+      paper: '#FFFFFF',
+    },
+
+    text: {
+      primary: '#212121',
+      secondary: '#555555',
+    },
+    divider: '#E0E0E0'
   },
   breakpoints: {
     values: {
@@ -31,9 +41,9 @@ const baseTheme = createTheme({
     },
   },
   mixins: {
-    toolbar: {
-      minHeight: 64,
-    },
+    // toolbar: {
+    //   minHeight: 64,
+    // },
   },
   shape: {
     borderRadius: 8, // Material Design default

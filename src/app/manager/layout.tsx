@@ -3,7 +3,7 @@
 import AccessRestricted from '@/components/AccessRestricted'
 import ManagerAuthCheckingLoader from '@/components/loaders/ManagerAuthCheckingLoader'
 import { ArrowBack, More } from '@mui/icons-material'
-import { Card, CardContent, CardHeader, Container, IconButton } from '@mui/material'
+import { Card, CardContent, CardHeader, IconButton } from '@mui/material'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -31,28 +31,28 @@ function Layout({ children }: { children: React.ReactNode }) {
 
 
     return (
-        <Container maxWidth='lg'>
-            <Card variant='outlined'>
-                <CardHeader
-                    avatar={
-                        <IconButton onClick={() => router.back()} color='default' sx={{ bgcolor: 'primary.light' }} aria-label="recipe">
-                            <ArrowBack />
-                        </IconButton>
-                    }
-                    action={
-                        <IconButton aria-label="settings">
-                            <More />
-                        </IconButton>
-                    }
-                    title="Manager Dashboard"
 
-                    subheader="leave request notifications"
-                />
-                <CardContent>
-                    {children}
-                </CardContent>
-            </Card>
-        </Container>
+        <Card variant='outlined'>
+            <CardHeader
+                avatar={
+                    <IconButton onClick={() => router.back()} color='default' sx={{ bgcolor: 'primary.light' }} aria-label="recipe">
+                        <ArrowBack />
+                    </IconButton>
+                }
+                action={
+                    <IconButton aria-label="settings">
+                        <More />
+                    </IconButton>
+                }
+                title="Manager Dashboard"
+
+                subheader="leave request notifications"
+            />
+            <CardContent>
+                {children}
+            </CardContent>
+        </Card>
+
 
     )
 }

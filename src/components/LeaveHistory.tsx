@@ -46,8 +46,10 @@ export default function LeaveHistory({ leaves }: LeaveHistoryProps) {
     };
 
     return (
-        <TableContainer component={Paper} variant='outlined'>
-            <Table>
+        <TableContainer component={Paper} sx={{
+            maxHeight: '54vh'
+        }} variant='outlined'>
+            <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                     <TableRow>
                         <TableCell>Request Date</TableCell>
@@ -58,12 +60,11 @@ export default function LeaveHistory({ leaves }: LeaveHistoryProps) {
                         <TableCell>Approved By</TableCell>
                     </TableRow>
                 </TableHead>
-                <TableBody>
+                <TableBody >
                     {leaves.map((leave) => {
                         const start = new Date(leave.startDate);
                         const end = new Date(leave.endDate);
                         const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-
                         return (
                             <TableRow key={leave._id}>
                                 <TableCell>

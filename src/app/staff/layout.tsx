@@ -2,8 +2,9 @@
 'use client'
 import AccessRestricted from '@/components/AccessRestricted'
 import StaffDashboardSkeleton from '@/components/loaders/StaffAuthCheckingLoader'
-import { ArrowBack, More } from '@mui/icons-material'
-import { Card, CardContent, CardHeader, Container, Grid, IconButton } from '@mui/material'
+import theme from '@/theme/theme'
+import { ArrowBack } from '@mui/icons-material'
+import { Grid, IconButton, Stack, Typography } from '@mui/material'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -27,35 +28,30 @@ function Layout({ LeaveFormSection, LeaveRequestHistory }: { children: React.Rea
     }
 
     return (
-        <Container maxWidth='xl'>
-            <Card>
-                <CardHeader
-                    avatar={
-                        <IconButton onClick={() => router.back()} color='default' sx={{ bgcolor: 'primary.light' }} aria-label="recipe">
-                            <ArrowBack />
-                        </IconButton>
-                    }
-                    action={
-                        <IconButton aria-label="settings">
-                            <More />
-                        </IconButton>
-                    }
-                    title="Staff Dashboard"
+        <Stack spacing={theme.spacing(2)}>
+            <Stack direction={'row'} spacing={theme.spacing(2)} alignItems={'center'}>
+                <IconButton onClick={() => router.back()} color='default' sx={{ bgcolor: 'primary.light' }} aria-label="recipe">
+                    <ArrowBack />
+                </IconButton>
+                <Stack>
+                    <Typography variant='h6' fontWeight={"bold"}>Staff Dashboard</Typography>
+                    <Typography variant='body1'>leave request notifications</Typography>
+                </Stack>
+            </Stack>
+            <Grid container spacing={2}>
+                <Grid size={{ xs: 12, sm: 12, md: 6 }}>
+                    {LeaveFormSection}
+                </Grid>
+                <Grid size={{ xs: 12, sm: 12, md: 6 }}>
+                    {LeaveRequestHistory}
+                </Grid>
+            </Grid>
 
-                    subheader="leave request notifications"
-                />
-                <CardContent>
-                    <Grid container spacing={2}>
-                        <Grid size={{ xs: 12, sm: 12, md: 6 }}>
-                            {LeaveFormSection}
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 12, md: 6 }}>
-                            {LeaveRequestHistory}
-                        </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>
-        </Container>
+        </Stack>
+
+
+
+
 
 
     )

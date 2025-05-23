@@ -13,7 +13,7 @@ export default function Home() {
   if (status === 'loading') {
     return (
 
-      <Stack spacing={1} justifyContent={'center'} height={'80vh'} alignItems={'center'}>
+      <Stack spacing={1}>
         <Container component={Card} maxWidth='sm' sx={{ p: 4, display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
           <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
@@ -27,125 +27,101 @@ export default function Home() {
   // Error state (if session exists but is invalid)
   if (status === 'unauthenticated' || !session) {
     return (
-      <Container maxWidth="sm" sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '80vh',
-        gap: 3,
-        textAlign: 'center'
-      }}>
-
-        <Card component={Container} maxWidth='sm'>
-          <CardContent>
-            <Stack spacing={4}>
-
-              <Typography variant="h4" component="h1">
-                Welcome to Tianyin&apos;s LMS!
-              </Typography>
-              <Typography variant="body1">
-                Please sign in to access your account
-              </Typography>
-              <Button
-                variant="contained"
-                size="large"
-                fullWidth
-                component={Link}
-                href="/login"
-                sx={{ mt: 2 }}
-              >
-                Login Now
-              </Button>
-
-            </Stack>
-          </CardContent>
-        </Card>
-
-
-      </Container>
-    );
-  }
-
-  // Authenticated state
-  return (
-    <Container maxWidth="sm" sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '80vh',
-      gap: 3,
-      textAlign: 'center'
-    }}>
-
-      <Card component={Container} maxWidth='sm'>
+      <Card sx={{ maxWidth: 'sm' }}>
         <CardContent>
           <Stack spacing={4}>
             <Typography variant="h4" component="h1">
               Welcome to Tianyin&apos;s LMS!
             </Typography>
-
             <Typography variant="body1">
-              You&apos;re logged in as: <strong>{session.user?.email}</strong>
+              Please sign in to access your account
             </Typography>
-
-            <Box sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2,
-              width: '100%',
-              mt: 2
-            }}>
-              {session.user?.role === 'admin' && (
-                <Button
-                  variant="contained"
-                  size="large"
-                  fullWidth
-                  component={Link}
-                  href="/admin"
-                  sx={{ py: 1.5 }}
-                >
-                  Go to Admin Dashboard
-                </Button>
-              )}
-
-              {session.user?.role === 'manager' && (
-                <Button
-                  variant="contained"
-                  size="large"
-                  fullWidth
-                  component={Link}
-                  href="/manager"
-                  sx={{ py: 1.5 }}
-                >
-                  Go to Manager Portal
-                </Button>
-              )}
-
-              {session.user?.role === 'staff' && (
-                <Button
-                  variant="contained"
-                  size="large"
-                  fullWidth
-                  component={Link}
-                  href="/staff"
-                  sx={{}}
-                >
-                  Go to Staff Portal
-                </Button>
-              )}
-
-              <SignOutButton />
-            </Box>
+            <Button
+              variant="contained"
+              size="large"
+              fullWidth
+              component={Link}
+              href="/login"
+              sx={{ mt: 2 }}
+            >
+              Login Now
+            </Button>
 
           </Stack>
-
-
         </CardContent>
       </Card>
 
+    );
+  }
 
-    </Container>
+  // Authenticated state
+  return (
+    <Card sx={{ maxWidth: 'sm' }}>
+      <CardContent>
+        <Stack spacing={4}>
+          <Typography variant="h4" component="h1">
+            Welcome to Tianyin&apos;s LMS!
+          </Typography>
+
+          <Typography variant="body1">
+            You&apos;re logged in as: <strong>{session.user?.email}</strong>
+          </Typography>
+
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            width: '100%',
+            mt: 2
+          }}>
+            {session.user?.role === 'admin' && (
+              <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                component={Link}
+                href="/admin"
+                sx={{ py: 1.5 }}
+              >
+                Go to Admin Dashboard
+              </Button>
+            )}
+
+            {session.user?.role === 'manager' && (
+              <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                component={Link}
+                href="/manager"
+                sx={{ py: 1.5 }}
+              >
+                Go to Manager Portal
+              </Button>
+            )}
+
+            {session.user?.role === 'staff' && (
+              <Button
+                variant="contained"
+                size="large"
+                fullWidth
+                component={Link}
+                href="/staff"
+                sx={{}}
+              >
+                Go to Staff Portal
+              </Button>
+            )}
+
+            <SignOutButton />
+          </Box>
+
+        </Stack>
+
+
+      </CardContent>
+    </Card>
+
+
   );
 }

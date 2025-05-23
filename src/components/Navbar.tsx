@@ -55,7 +55,7 @@ export default function Navbar() {
 
     return (
         <>
-            <AppBar position="fixed" variant='elevation' elevation={0}>
+            <AppBar position="static" variant='elevation' elevation={0}>
                 <Toolbar>
                     <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
                         TIANYIN LMS
