@@ -17,6 +17,8 @@ import {
     ListItemButton,
     ListItemText,
     CircularProgress,
+    Box,
+    Avatar,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
@@ -57,7 +59,7 @@ export default function Navbar() {
         <>
             <AppBar position="static" variant='elevation' elevation={0}>
                 <Toolbar>
-                    <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
+                    <Typography variant="h4" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
                         TIANYIN LMS
                     </Typography>
 
@@ -72,14 +74,14 @@ export default function Navbar() {
                     </IconButton>
 
                     {/* Desktop navigation - hidden on mobile */}
-                    <Stack
+                    {/* <Stack
                         direction="row"
                         alignItems="center"
                         spacing={2}
                         sx={{ display: { xs: 'none', md: 'flex' } }}
                     >
                         {commonLinks.map(({ label, href }) => (
-                            <Button key={href} color="inherit" component={Link} href={href}>
+                            <Button key={href} color="inherit" sx={{ textTransform: 'uppercase' }} component={Link} href={href}>
                                 {label}
                             </Button>
                         ))}
@@ -93,11 +95,114 @@ export default function Navbar() {
                                 <SignOutButton />
                             </>
                         ) : (
-                            <Button color="inherit" component={Link} href="/login">
+                            <Button sx={{ textTransform: 'uppercase' }} color="inherit" component={Link} href="/login">
+                                Login
+                            </Button>
+                        )}
+                    </Stack> */}
+
+
+
+                    <Stack
+                        direction="row"
+                        alignItems="center"
+                        spacing={3}
+                        sx={{
+                            display: { xs: 'none', md: 'flex' },
+                            ml: 3 // Add some left margin for better spacing
+                        }}
+                    >
+                        {commonLinks.map(({ label, href }) => (
+                            <Button
+                                key={href}
+                                color="inherit"
+                                component={Link}
+                                href={href}
+                                sx={{
+                                    textTransform: 'none', // More modern than uppercase
+                                    fontWeight: 500,
+                                    fontSize: '0.875rem',
+                                    letterSpacing: '0.02em',
+                                    '&:hover': {
+                                        color: 'primary.light',
+                                        backgroundColor: 'transparent'
+                                    },
+                                    borderRadius: 1,
+                                    px: 1.5,
+                                    py: 1
+                                }}
+                            >
+                                {label}
+                            </Button>
+                        ))}
+
+                        {status === 'loading' ? (
+                            <Box sx={{ px: 2 }}>
+                                <CircularProgress color="inherit" size={20} thickness={4} />
+                            </Box>
+                        ) : session?.user ? (
+                            <>
+                                <Box sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1.5,
+                                    px: 2,
+                                    py: 1,
+                                    borderRadius: 1,
+                                    bgcolor: 'rgba(255, 255, 255, 0.08)',
+                                    '&:hover': {
+                                        bgcolor: 'rgba(255, 255, 255, 0.12)'
+                                    }
+                                }}>
+                                    <Avatar
+                                        sx={{
+                                            width: 32,
+                                            height: 32,
+                                            bgcolor: 'primary.main',
+                                            fontSize: '0.875rem'
+                                        }}
+                                    >
+                                        {session.user.name?.charAt(0) || session.user.email?.charAt(0)}
+                                    </Avatar>
+                                    <Typography variant="subtitle2" noWrap>
+                                        <Box component="span" fontWeight="medium">
+                                            {session.user.name}
+                                        </Box>
+                                        <Box component="span" color="text.secondary" ml={1} fontSize="0.75rem">
+                                            ({session.user.role})
+                                        </Box>
+                                    </Typography>
+                                </Box>
+                                <SignOutButton
+
+                                />
+                            </>
+                        ) : (
+                            <Button
+                                color="inherit"
+                                component={Link}
+                                href="/login"
+                                sx={{
+                                    textTransform: 'none',
+                                    fontWeight: 500,
+                                    border: '1px solid',
+                                    borderColor: 'divider',
+                                    borderRadius: 2,
+                                    px: 2.5,
+                                    py: 0.8,
+                                    '&:hover': {
+                                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                                        borderColor: 'primary.light'
+                                    }
+                                }}
+                            >
                                 Login
                             </Button>
                         )}
                     </Stack>
+
+
+
                 </Toolbar>
             </AppBar>
 

@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { LoginOutlined, Visibility, VisibilityOff } from '@mui/icons-material';
 import Link from 'next/link';
 import LoadingProgress from '@/components/LoadingProgress';
 import { useRouter } from 'next/navigation';
@@ -50,7 +50,7 @@ export default function LoginPage() {
 
     return (
         <Container maxWidth="sm">
-            <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+            <Paper variant='outlined' sx={{ p: 4, borderRadius: 2 }}>
                 <Typography variant="h4" component="h1" align="center" gutterBottom>
                     Welcome Back
                 </Typography>
@@ -146,6 +146,7 @@ export default function LoginPage() {
                                 size="large"
                                 disabled={isSubmitting}
                                 loading={isSubmitting}
+                                startIcon={<LoginOutlined />}
                                 sx={{ mt: 1, py: 1.5 }}
                             >
 

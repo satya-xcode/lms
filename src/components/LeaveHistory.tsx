@@ -30,6 +30,7 @@ interface LeaveHistoryProps {
 }
 
 export default function LeaveHistory({ leaves }: LeaveHistoryProps) {
+
     if (leaves.length === 0) {
         return <Typography variant='body1' color='error'>No leave history found</Typography>;
     }

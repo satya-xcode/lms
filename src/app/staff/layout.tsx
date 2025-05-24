@@ -2,9 +2,9 @@
 'use client'
 import AccessRestricted from '@/components/AccessRestricted'
 import StaffDashboardSkeleton from '@/components/loaders/StaffAuthCheckingLoader'
+import BackSection from '@/components/shared/BackSection'
 import theme from '@/theme/theme'
-import { ArrowBack } from '@mui/icons-material'
-import { Grid, IconButton, Stack, Typography } from '@mui/material'
+import { Grid, Stack } from '@mui/material'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import React from 'react'
@@ -29,15 +29,7 @@ function Layout({ LeaveFormSection, LeaveRequestHistory }: { children: React.Rea
 
     return (
         <Stack spacing={theme.spacing(2)}>
-            <Stack direction={'row'} spacing={theme.spacing(2)} alignItems={'center'}>
-                <IconButton onClick={() => router.back()} color='default' sx={{ bgcolor: 'primary.light' }} aria-label="recipe">
-                    <ArrowBack />
-                </IconButton>
-                <Stack>
-                    <Typography variant='h6' fontWeight={"bold"}>Staff Dashboard</Typography>
-                    <Typography variant='body1'>leave request notifications</Typography>
-                </Stack>
-            </Stack>
+            <BackSection title='Staff Dashboard' description='leave request notifications' />
             <Grid container spacing={2}>
                 <Grid size={{ xs: 12, sm: 12, md: 6 }}>
                     {LeaveFormSection}

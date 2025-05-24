@@ -11,26 +11,22 @@ export default function ManagerDashboard() {
     const { data: pendingRequests, isLoading } = useManager({ managerId: data?.user?.id })
 
     return (
-        <>
 
-            <Card variant='outlined'>
-                <CardContent>
-                    {/* <Typography variant="h6" gutterBottom>
-                        Pending Leave Requests
-                    </Typography> */}
-                    {isLoading ? (
-                        <Stack spacing={1}>
-                            <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
-                            <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
-                            <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
-                            <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
-                        </Stack>
-                    ) : (
-                        <PendingLeaveRequests requests={pendingRequests || []} />
-                    )}
-                </CardContent>
-            </Card>
-        </>
+        <Card variant='outlined'>
+            <CardContent>
+                {isLoading ? (
+                    <Stack spacing={1}>
+                        <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
+                        <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
+                        <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
+                        <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
+                    </Stack>
+                ) : (
+                    <PendingLeaveRequests requests={pendingRequests || []} />
+                )}
+            </CardContent>
+        </Card>
+
     );
 }
 
