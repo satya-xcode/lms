@@ -8,7 +8,7 @@ import { useSession } from 'next-auth/react';
 import { CheckCircleOutline, LoginOutlined } from '@mui/icons-material';
 import theme from '@/theme/theme';
 
-export default function Home() {
+export default function HomePage() {
   const { data: session, status }: any = useSession();
 
   // Loading state with improved skeleton loading

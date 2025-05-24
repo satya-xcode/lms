@@ -1,6 +1,6 @@
 import { connectToDB } from '@/lib/mongoose';
 import User from '@/models/User';
-import bcrypt from 'bcrypt';
+// import bcrypt from 'bcrypt';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
@@ -39,14 +39,14 @@ export async function POST(req: Request) {
         }
 
         // Hash password
-        const hashedPassword = await bcrypt.hash(password, 12);
+        // const hashedPassword = await bcrypt.hash(password, 12);
 
         // Create new user
         const newUser = new User({
             name,
             email,
             mobile,
-            password: hashedPassword,
+            password: password,
             role: 'staff',
             department,
             manager: managerId || null,

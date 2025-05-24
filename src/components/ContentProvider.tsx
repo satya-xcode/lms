@@ -66,7 +66,6 @@ function ContentProvider({ children }: { children: React.ReactNode }) {
                         {children}
                     </Container> */}
                     <Toaster expand position='top-center' />
-
                 </ThemeProvider>
             </SWRConfig>
         </SessionProvider >
