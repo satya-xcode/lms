@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import {
     Box,
@@ -19,6 +20,8 @@ import { LoginOutlined, Visibility, VisibilityOff } from '@mui/icons-material';
 import Link from 'next/link';
 import LoadingProgress from '@/components/LoadingProgress';
 import { useRouter } from 'next/navigation';
+import Navbar from '@/components/Navbar';
+import theme from '@/theme/theme';
 
 
 const LoginSchema = Yup.object().shape({
@@ -32,144 +35,148 @@ const LoginSchema = Yup.object().shape({
 
 export default function LoginPage() {
     const router = useRouter()
-    const session = useSession();
-
-    useEffect(() => {
-        if (session.status === 'authenticated') {
-            router.push('/');
-        }
-    }, [session.status, router]);
+    const session: any = useSession();
+    // const searchParams = useSearchParams()
+    // const callbackUrl = searchParams.get('callbackUrl') || '/'
+    // // useEffect(() => {
+    // //     if (session.status === 'authenticated') {
+    // //         router.push('/');
+    // //     }
+    // // }, [session.status, router]);
 
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
 
     if (session.status === 'loading') {
         return <LoadingProgress />;
     }
 
     return (
-        <Container maxWidth="sm">
-            <Paper variant='outlined' sx={{ p: 4, borderRadius: 2 }}>
-                <Typography variant="h4" component="h1" align="center" gutterBottom>
-                    Welcome Back
-                </Typography>
-                <Typography variant="body2" color="text.secondary" align="center" mb={4}>
-                    Please enter your credentials to continue
-                </Typography>
+        <>
+            <Navbar />
+            <Container maxWidth="sm" sx={{ mt: theme.spacing(2) }}>
+                <Paper variant='outlined' sx={{ p: 4, borderRadius: 2 }}>
+                    <Typography variant="h4" component="h1" align="center" gutterBottom>
+                        Welcome Back
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" align="center" mb={4}>
+                        Please enter your credentials to continue
+                    </Typography>
 
-                {error && (
-                    <Alert severity="error" sx={{ mb: 3 }}>
-                        {error}
-                    </Alert>
-                )}
-
-                <Formik
-                    initialValues={{ email: '', password: '' }}
-                    validationSchema={LoginSchema}
-                    onSubmit={async (values, { setSubmitting }) => {
-                        setError(null);
-                        try {
-                            const res = await signIn('credentials', {
-                                redirect: false,
-                                email: values.email,
-                                password: values.password
-                            });
-
-                            if (res?.error) {
-                                setError('Invalid email or password');
-                            } else if (res?.ok) {
-                                router.push('/');
-                            }
-                            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                        } catch (err) {
-                            setError('An unexpected error occurred');
-                        } finally {
-                            setSubmitting(false);
-                        }
-                    }}
-                >
-                    {({ errors, touched, isSubmitting }) => (
-                        <Form>
-                            <Field
-                                as={TextField}
-                                name="email"
-                                label="Email Address"
-                                fullWidth
-                                margin="normal"
-                                error={touched.email && !!errors.email}
-                                helperText={touched.email && errors.email}
-                                autoComplete="email"
-                                autoFocus
-                            />
-
-                            <Field
-                                as={TextField}
-                                name="password"
-                                label="Password"
-                                type={showPassword ? 'text' : 'password'}
-                                fullWidth
-                                margin="normal"
-                                error={touched.password && !!errors.password}
-                                helperText={touched.password && errors.password}
-                                autoComplete="current-password"
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                                onClick={() => setShowPassword(!showPassword)}
-                                                edge="end"
-                                            >
-                                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    )
-                                }}
-                            />
-
-                            <Box sx={{ textAlign: 'right', mb: 2 }}>
-                                <Link href="/forgot-password" passHref>
-                                    <Typography
-                                        variant="body2"
-                                        color="primary"
-                                        sx={{ textDecoration: 'none', cursor: 'pointer' }}
-                                    >
-                                        Forgot password?
-                                    </Typography>
-                                </Link>
-                            </Box>
-
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                size="large"
-                                disabled={isSubmitting}
-                                loading={isSubmitting}
-                                startIcon={<LoginOutlined />}
-                                sx={{ mt: 1, py: 1.5 }}
-                            >
-
-                                Sign In
-
-                            </Button>
-                        </Form>
+                    {error && (
+                        <Alert severity="error" sx={{ mb: 3 }}>
+                            {error}
+                        </Alert>
                     )}
-                </Formik>
 
-                <Divider sx={{ my: 3 }}>OR</Divider>
+                    <Formik
+                        initialValues={{ email: '', password: '' }}
+                        validationSchema={LoginSchema}
+                        onSubmit={async (values, { setSubmitting }) => {
+                            setError(null);
+                            try {
+                                const res = await signIn('credentials', {
+                                    redirect: false,
+                                    email: values.email,
+                                    password: values.password
+                                });
 
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <Button
-                        variant="outlined"
-                        fullWidth
-                        onClick={() => signIn('google')}
-                        startIcon={<GoogleIcon />}
-                        sx={{ py: 1.5 }}
+                                if (res?.error) {
+                                    setError('Invalid email or password');
+                                } else if (res?.ok) {
+                                    router.push('/');
+                                    // Remove callbackUrl from the redirect
+                                    // router.push(callbackUrl === '/' ? `/${session?.data?.user?.role}` : callbackUrl)
+                                }
+                                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                            } catch (err) {
+                                setError('An unexpected error occurred');
+                            } finally {
+                                setSubmitting(false);
+                            }
+                        }}
                     >
-                        Continue with Google
-                    </Button>
-                    {/* <Button
+                        {({ errors, touched, isSubmitting }) => (
+                            <Form>
+                                <Field
+                                    as={TextField}
+                                    name="email"
+                                    label="Email Address"
+                                    fullWidth
+                                    margin="normal"
+                                    error={touched.email && !!errors.email}
+                                    helperText={touched.email && errors.email}
+                                    autoComplete="email"
+                                    autoFocus
+                                />
+
+                                <Field
+                                    as={TextField}
+                                    name="password"
+                                    label="Password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    fullWidth
+                                    margin="normal"
+                                    error={touched.password && !!errors.password}
+                                    helperText={touched.password && errors.password}
+                                    autoComplete="current-password"
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    edge="end"
+                                                >
+                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
+
+                                <Box sx={{ textAlign: 'right', mb: 2 }}>
+                                    <Link href="/forgot-password" passHref>
+                                        <Typography
+                                            variant="body2"
+                                            color="primary"
+                                            sx={{ textDecoration: 'none', cursor: 'pointer' }}
+                                        >
+                                            Forgot password?
+                                        </Typography>
+                                    </Link>
+                                </Box>
+
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    size="large"
+                                    disabled={isSubmitting}
+                                    loading={isSubmitting}
+                                    startIcon={<LoginOutlined />}
+                                    sx={{ mt: 1, py: 1.5 }}
+                                >
+
+                                    Sign In
+
+                                </Button>
+                            </Form>
+                        )}
+                    </Formik>
+
+                    <Divider sx={{ my: 3 }}>OR</Divider>
+
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <Button
+                            variant="outlined"
+                            fullWidth
+                            onClick={() => signIn('google')}
+                            startIcon={<GoogleIcon />}
+                            sx={{ py: 1.5 }}
+                        >
+                            Continue with Google
+                        </Button>
+                        {/* <Button
                     variant="outlined"
                     fullWidth
                     onClick={() => signIn('github', { callbackUrl })}
@@ -178,9 +185,9 @@ export default function LoginPage() {
                 >
                     Continue with GitHub
                 </Button> */}
-                </Box>
+                    </Box>
 
-                {/* <Box sx={{ textAlign: 'center', mt: 3 }}>
+                    {/* <Box sx={{ textAlign: 'center', mt: 3 }}>
                 <Typography variant="body2" color="text.secondary">
                     Don&apos;t have an account?{' '}
                     <Link href="/register" passHref>
@@ -194,8 +201,9 @@ export default function LoginPage() {
                     </Link>
                 </Typography>
             </Box> */}
-            </Paper>
-        </Container>
+                </Paper>
+            </Container>
+        </>
     );
 }
 

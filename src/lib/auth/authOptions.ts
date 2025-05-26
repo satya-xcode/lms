@@ -40,6 +40,13 @@ export const authOptions: AuthOptions = {
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         }),
     ],
+    pages: {
+        signIn: '/login',
+        // signOut: '/auth/signout',
+        // error: '/auth/error', // Error code passed in query string as ?error=
+        // verifyRequest: '/auth/verify-request', // (used for check email message)
+        // newUser: '/auth/new-user' // New users will be directed here on first sign in
+    },
     callbacks: {
         async signIn({ user, account }: { user: any; account: any }) {
             if (account.provider === 'google') {
@@ -57,20 +64,33 @@ export const authOptions: AuthOptions = {
             }
             return true;
         },
-        async session({ session }: { session: any }) {
-            await connectToDB();
-            const userInDb = await User.findOne({ email: session.user.email });
-            if (userInDb) {
-                session.user.role = userInDb.role;
-                session.user.id = userInDb._id;
+        async jwt({ token, user }: { token: any; user: any }) {
+            // Persist the role to the token right after sign in
+            if (user) {
+                token.role = user.role;
+                token.id = user.id;
+            }
+            return token;
+        },
+        async session({ session, token }: { session: any, token: any }) {
+            // Send role to the client
+            if (token) {
+                session.user.role = token.role;
+                session.user.id = token.id;
             }
             return session;
-        },
+        }
+        // async session({ session }: { session: any }) {
+        //     await connectToDB();
+        //     const userInDb = await User.findOne({ email: session.user.email });
+        //     if (userInDb) {
+        //         session.user.role = userInDb.role;
+        //         session.user.id = userInDb._id;
+        //     }
+        //     return session;
+        // },
     },
     session: {
         strategy: 'jwt',
-    },
-    pages: {
-        signIn: '/login',
-    },
+    }
 };

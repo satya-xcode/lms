@@ -57,7 +57,7 @@ export default function Navbar() {
 
     return (
         <>
-            <AppBar position="static" variant='elevation' elevation={0}>
+            <AppBar position="static" sx={{}} variant='elevation' elevation={0}>
                 <Toolbar>
                     <Typography variant="h4" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
                         TIANYIN LMS
@@ -136,69 +136,69 @@ export default function Navbar() {
                             </Button>
                         ))}
 
-                        {status === 'loading' ? (
-                            <Box sx={{ px: 2 }}>
-                                <CircularProgress color="inherit" size={20} thickness={4} />
-                            </Box>
-                        ) : session?.user ? (
-                            <>
-                                <Box sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 1.5,
-                                    px: 2,
-                                    py: 1,
-                                    borderRadius: 1,
-                                    bgcolor: 'rgba(255, 255, 255, 0.08)',
-                                    '&:hover': {
-                                        bgcolor: 'rgba(255, 255, 255, 0.12)'
-                                    }
-                                }}>
-                                    <Avatar
-                                        sx={{
-                                            width: 32,
-                                            height: 32,
-                                            bgcolor: 'primary.main',
-                                            fontSize: '0.875rem'
-                                        }}
-                                    >
-                                        {session.user.name?.charAt(0) || session.user.email?.charAt(0)}
-                                    </Avatar>
-                                    <Typography variant="subtitle2" noWrap>
-                                        <Box component="span" fontWeight="medium">
-                                            {session.user.name}
-                                        </Box>
-                                        <Box component="span" color="text.secondary" ml={1} fontSize="0.75rem">
-                                            ({session.user.role})
-                                        </Box>
-                                    </Typography>
+                        {
+                            status === 'loading' ? (
+                                <Box sx={{ px: 2 }}>
+                                    <CircularProgress color="inherit" size={20} thickness={4} />
                                 </Box>
-                                <SignOutButton
-
-                                />
-                            </>
-                        ) : (
-                            <Button
-                                color="inherit"
-                                component={Link}
-                                href="/login"
-                                sx={{
-                                    textTransform: 'none',
-                                    fontWeight: 500,
-                                    border: '1px solid',
-                                    borderColor: 'divider',
-                                    borderRadius: 2,
-                                    px: 2.5,
-                                    py: 0.8,
-                                    '&:hover': {
-                                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                                        borderColor: 'primary.light'
-                                    }
-                                }}
-                            >
-                                Login
-                            </Button>
-                        )}
+                            ) : session?.user ? (
+                                <>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 1.5,
+                                        px: 2,
+                                        py: 1,
+                                        borderRadius: 1,
+                                        bgcolor: 'rgba(255, 255, 255, 0.08)',
+                                        '&:hover': {
+                                            bgcolor: 'rgba(255, 255, 255, 0.12)'
+                                        }
+                                    }}>
+                                        <Avatar
+                                            sx={{
+                                                width: 32,
+                                                height: 32,
+                                                bgcolor: 'primary.main',
+                                                fontSize: '0.875rem'
+                                            }}
+                                        >
+                                            {session.user.name?.charAt(0) || session.user.email?.charAt(0)}
+                                        </Avatar>
+                                        <Typography variant="subtitle2" noWrap>
+                                            <Box component="span" fontWeight="medium">
+                                                {session.user.name}
+                                            </Box>
+                                            <Box component="span" color="text.secondary" ml={1} fontSize="0.75rem">
+                                                ({session.user.role})
+                                            </Box>
+                                        </Typography>
+                                    </Box>
+                                    <SignOutButton />
+                                </>
+                            ) : (
+                                <Button
+                                    color="inherit"
+                                    component={Link}
+                                    href="/login"
+                                    sx={{
+                                        textTransform: 'none',
+                                        fontWeight: 500,
+                                        border: '1px solid',
+                                        borderColor: 'divider',
+                                        borderRadius: 2,
+                                        px: 2.5,
+                                        py: 0.8,
+                                        '&:hover': {
+                                            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                                            borderColor: 'primary.light'
+                                        }
+                                    }}
+                                >
+                                    Login
+                                </Button>
+                            )
+                        }
                     </Stack>
 
 

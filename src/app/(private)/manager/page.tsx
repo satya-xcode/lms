@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-
 import PendingLeaveRequests from '@/components/PendingLeaveRequests';
 import { useManager } from '@/hooks/useManager';
 import { Card, CardContent, Stack, Skeleton } from '@mui/material';
@@ -9,9 +8,7 @@ import { useSession } from 'next-auth/react';
 export default function ManagerDashboard() {
     const { data }: any = useSession()
     const { data: pendingRequests, isLoading } = useManager({ managerId: data?.user?.id })
-
     return (
-
         <Card variant='outlined'>
             <CardContent>
                 {isLoading ? (

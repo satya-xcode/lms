@@ -6,6 +6,8 @@ import LoadingProgress from '@/components/LoadingProgress';
 import RegistrationForm from './components/RegistrationForm';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/fetcher';
+import Navbar from '@/components/Navbar';
+import theme from '@/theme/theme';
 
 interface Manager {
     _id: string;
@@ -28,8 +30,12 @@ export default function RegisterPage() {
     }
 
     return (
-        <Container maxWidth="sm">
-            <RegistrationForm managers={managers || []} />
-        </Container>
+        <>
+            <Navbar />
+            <Container maxWidth="sm" sx={{ mt: theme.spacing(2) }}>
+                <RegistrationForm managers={managers || []} />
+            </Container>
+        </>
+
     );
 }
