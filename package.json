@@ -21,6 +21,7 @@
     "axios": "^1.9.0",
     "bcrypt": "^6.0.0",
     "date-fns": "^4.1.0",
+    "dayjs": "^1.11.13",
     "formik": "^2.4.6",
     "framer-motion": "^12.12.1",
     "jsonwebtoken": "^9.0.2",

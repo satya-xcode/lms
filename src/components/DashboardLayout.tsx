@@ -33,20 +33,13 @@ interface DashboardLayoutProps {
     children: ReactNode;
 }
 
-// const menuItems = [
-//     { label: 'Dashboard', icon: <DashboardIcon />, href: '/staff' },
-//     { label: 'Apply Leave', icon: <HistoryIcon />, href: '/staff/apply-leave' },
-//     { label: 'Leaves History', icon: <HistoryIcon />, href: '/staff/leave-history' },
-//     { label: 'My Account', icon: <SettingsIcon />, href: '/staff/my-account' }
-// ];
-
 
 // Role-based navigation configuration
 const roleNavigation: any = {
     admin: [
         { label: 'Dashboard', href: '/admin', icon: <Dashboard /> },
-        { label: 'Manager List', href: '/admin/managers', icon: <People /> },
-        { label: 'Staff List', href: '/admin/staffs', icon: <People /> },
+        { label: 'Managers', href: '/admin/managers', icon: <People /> },
+        { label: 'Staffs', href: '/admin/staffs', icon: <People /> },
         { label: 'My Account', href: '/admin/account', icon: <AccountCircle /> }
     ],
     manager: [

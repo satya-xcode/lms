@@ -27,11 +27,16 @@ export const authOptions: AuthOptions = {
                 });
 
                 if (!user) throw new Error('Invalid credentials');
+
                 return {
-                    id: user._id,
+                    id: user._id.toString(),
                     name: user.name,
                     email: user.email,
                     role: user.role,
+                    manager: user.manager,
+                    leaveBalance: user.leaveBalance,
+                    monthlyLimits: user.monthlyLimits,
+                    currentMonth: user.currentMonth
                 };
             },
         }),
@@ -66,17 +71,28 @@ export const authOptions: AuthOptions = {
         },
         async jwt({ token, user }: { token: any; user: any }) {
             // Persist the role to the token right after sign in
+            // console.log('token', token)
+            // console.log('user', user)
             if (user) {
                 token.role = user.role;
                 token.id = user.id;
+                token.manager = user.manager;
+                token.leaveBalance = user.leaveBalance;
+                token.monthlyLimits = user.monthlyLimits;
+                token.currentMonth = user.currentMonth;
             }
             return token;
         },
         async session({ session, token }: { session: any, token: any }) {
             // Send role to the client
+            // console.log('session', session)
             if (token) {
                 session.user.role = token.role;
                 session.user.id = token.id;
+                session.user.manager = token.manager;
+                session.user.leaveBalance = token.leaveBalance;
+                session.user.monthlyLimits = token.monthlyLimits;
+                session.user.currentMonth = token.currentMonth;
             }
             return session;
         }

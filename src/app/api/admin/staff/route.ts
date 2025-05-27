@@ -1,0 +1,84 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// app/api/admin/staff/route.ts
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import User from '@/models/User';
+import { connectToDB } from '@/lib/mongoose';
+import { authOptions } from '@/lib/auth/authOptions';
+
+export async function GET() {
+    await connectToDB();
+    const session: any = await getServerSession(authOptions);
+
+    if (!session || session.user.role !== 'admin') {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+    try {
+        const staffMembers = await User.find({ role: { $in: ['staff', 'manager'] } })
+            .select('-password')
+            .populate('manager', 'name email');
+
+        return NextResponse.json({ data: staffMembers }, { status: 200 });
+    } catch (error: any) {
+        return NextResponse.json(
+            { error: 'Internal server error', details: error.message },
+            { status: 500 }
+        );
+    }
+}
+
+export async function POST(req: Request) {
+    await connectToDB();
+    const session: any = await getServerSession(authOptions);
+
+    if (!session || session.user.role !== 'admin') {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+    try {
+        const { name, email, mobile, role, department, position, manager, password } = await req.json();
+
+        if (!name || !email || !mobile || !role || !department || !position) {
+            return NextResponse.json({ error: 'Required fields are missing' }, { status: 400 });
+        }
+
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return NextResponse.json({ error: 'User already exists' }, { status: 400 });
+        }
+
+        // Hash password if provided
+        // const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
+
+        const newStaff = new User({
+            name,
+            email,
+            mobile,
+            role,
+            department,
+            position,
+            manager: manager || null,
+            password: password,
+            monthlyLimits: {
+                halfDayLeaves: 2,
+                fullDayLeaves: 1,
+                gatePasses: 2,
+                latePasses: 2
+            }
+        });
+
+        await newStaff.save();
+
+        // Return user without password
+        const user = await User.findById(newStaff._id).select('-password');
+
+        return NextResponse.json({ data: user }, { status: 201 });
+    } catch (error: any) {
+        return NextResponse.json(
+            { error: 'Internal server error', details: error.message },
+            { status: 500 }
+        );
+    }
+}

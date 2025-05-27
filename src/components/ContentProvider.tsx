@@ -39,14 +39,14 @@ function ContentProvider({ children }: { children: React.ReactNode }) {
                                 bgcolor: '#E0F2F1',
                                 overflowX: 'auto',
                                 // padding: theme.spacing(2),
-                                scrollbarGutter: 'stable',
-                                '&::-webkit-scrollbar': {
-                                    width: '8px',
-                                },
-                                '&::-webkit-scrollbar-thumb': {
-                                    backgroundColor: 'rgba(0,0,0,0.2)',
-                                    borderRadius: '16px',
-                                },
+                                // scrollbarGutter: 'stable',
+                                // '&::-webkit-scrollbar': {
+                                //     width: '8px',
+                                // },
+                                // '&::-webkit-scrollbar-thumb': {
+                                //     backgroundColor: 'rgba(0,0,0,0.2)',
+                                //     borderRadius: '16px',
+                                // },
                             }}
                         >
                             {children}
