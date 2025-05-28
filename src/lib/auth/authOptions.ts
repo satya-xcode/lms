@@ -33,10 +33,10 @@ export const authOptions: AuthOptions = {
                     name: user.name,
                     email: user.email,
                     role: user.role,
-                    manager: user.manager,
-                    leaveBalance: user.leaveBalance,
-                    monthlyLimits: user.monthlyLimits,
-                    currentMonth: user.currentMonth
+                    // manager: user.manager,
+                    // leaveBalance: user.leaveBalance,
+                    // monthlyLimits: user.monthlyLimits,
+                    // currentMonth: user.currentMonth
                 };
             },
         }),
@@ -76,10 +76,10 @@ export const authOptions: AuthOptions = {
             if (user) {
                 token.role = user.role;
                 token.id = user.id;
-                token.manager = user.manager;
-                token.leaveBalance = user.leaveBalance;
-                token.monthlyLimits = user.monthlyLimits;
-                token.currentMonth = user.currentMonth;
+                // token.manager = user.manager;
+                // token.leaveBalance = user.leaveBalance;
+                // token.monthlyLimits = user.monthlyLimits;
+                // token.currentMonth = user.currentMonth;
             }
             return token;
         },
@@ -89,10 +89,10 @@ export const authOptions: AuthOptions = {
             if (token) {
                 session.user.role = token.role;
                 session.user.id = token.id;
-                session.user.manager = token.manager;
-                session.user.leaveBalance = token.leaveBalance;
-                session.user.monthlyLimits = token.monthlyLimits;
-                session.user.currentMonth = token.currentMonth;
+                // session.user.manager = token.manager;
+                // session.user.leaveBalance = token.leaveBalance;
+                // session.user.monthlyLimits = token.monthlyLimits;
+                // session.user.currentMonth = token.currentMonth;
             }
             return session;
         }

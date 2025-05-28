@@ -2,16 +2,17 @@
 'use client'
 import LeaveRequestForm from '@/components/LeaveRequestForm'
 import { Box } from '@mui/material';
-import { useSession } from 'next-auth/react';
 import React from 'react'
 // import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { LeaveRequestFormValues } from '@/utils/leaveRequestSchema';
 import { useStaffLeaveRequests } from '@/hooks/useStaffLeaveRequests';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 function LeaveFormSection() {
-    const { data }: any = useSession()
+    const { user } = useCurrentUser()
+
     const { createStaffLeaveRequest } = useStaffLeaveRequests({})
     const router = useRouter();
 
@@ -46,10 +47,10 @@ function LeaveFormSection() {
 
     // Get user limits from session data or use defaults
     const userLimits = {
-        halfDayLeaves: data?.user?.monthlyLimits?.halfDayLeaves || 2,
-        fullDayLeaves: data?.user?.monthlyLimits?.fullDayLeaves || 1,
-        gatePasses: data?.user?.monthlyLimits?.gatePasses || 2,
-        latePasses: data?.user?.monthlyLimits?.latePasses || 2,
+        halfDayLeaves: user?.monthlyLimits?.halfDayLeaves as number,
+        fullDayLeaves: user?.monthlyLimits?.fullDayLeaves as number,
+        gatePasses: user?.monthlyLimits?.gatePasses as number,
+        latePasses: user?.monthlyLimits?.latePasses as number,
     };
 
     return (

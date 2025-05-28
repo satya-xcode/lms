@@ -3,45 +3,28 @@
 'use client';
 
 import React from 'react';
-import { Box, Container, Tab, Tabs } from '@mui/material';
+import { Box, Container } from '@mui/material';
 
 import LeaveRequestForm from '@/components/LeaveRequestForm';
 
 import { useStaffLeaveRequests } from '@/hooks/useStaffLeaveRequests';
-import { useSession } from 'next-auth/react';
 import LeaveDashboard from '@/components/staff/LeaveDashboard';
-import LeaveRequestList from '@/components/staff/LeaveRequestList';
+
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 const StaffDashboard = () => {
-    const { data: session }: any = useSession();
-    const [tabValue, setTabValue] = React.useState(0);
-    // Fetch pending and approved requests
-    const { data: pendingRequests } = useStaffLeaveRequests({
-        staffId: session?.user?.id,
-        status: 'pending'
-    });
+    // const { data: session }: any = useSession();
+    const router = useRouter();
+    const { createStaffLeaveRequest } = useStaffLeaveRequests({})
+    const { user } = useCurrentUser();
 
-    const { data: approvedRequests } = useStaffLeaveRequests({
-        staffId: session?.user?.id,
-        status: 'approved'
-    });
-
-    const { data: rejectedRequests } = useStaffLeaveRequests({
-        staffId: session?.user?.id,
-        status: 'rejected'
-    });
-
-    const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-        setTabValue(newValue);
-    };
-    console.log(
-        "StaffData", session?.user
-    )
     const userLimits = {
-        halfDayLeaves: session?.user?.monthlyLimits?.halfDayLeaves || 2,
-        fullDayLeaves: session?.user?.monthlyLimits?.fullDayLeaves || 1,
-        gatePasses: session?.user?.monthlyLimits?.gatePasses || 2,
-        latePasses: session?.user?.monthlyLimits?.latePasses || 2,
+        halfDayLeaves: user?.monthlyLimits?.halfDayLeaves as number,
+        fullDayLeaves: user?.monthlyLimits?.fullDayLeaves as number,
+        gatePasses: user?.monthlyLimits?.gatePasses as number,
+        latePasses: user?.monthlyLimits?.latePasses as number,
     };
 
     const totalLimits = {
@@ -50,6 +33,7 @@ const StaffDashboard = () => {
         gatePasses: 2,
         latePasses: 2,
     };
+
 
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -63,33 +47,40 @@ const StaffDashboard = () => {
             <Box sx={{ mb: 4 }}>
                 <LeaveRequestForm
                     onSubmit={async (values) => {
-                        // You'll need to implement this using your API client
-                        // This is just a placeholder
-                        console.log('Submitting:', values);
+
+                        try {
+                            // Transform the data based on type
+                            // const requestData = {
+                            //     type: values.type,
+                            //     reason: values.reason,
+                            //     ...(values.type === 'full-day'
+                            //         ? {
+                            //             startDate: values.startDate,
+                            //             endDate: values.endDate
+                            //         }
+                            //         : {
+                            //             startTime: values.startTime,
+                            //             endTime: values.endTime
+                            //         }
+                            //     )
+                            // };
+
+                            // await axios.post('/api/leave/requests', requestData);
+                            await createStaffLeaveRequest(values)
+                            toast.success('Leave request submitted successfully!', { richColors: true });
+                            router.refresh(); // Refresh the page to update the leave list
+                        } catch (error: any) {
+                            toast.error(error.response?.data?.error || 'Failed to submit leave request', { richColors: true });
+                            console.error('Submission error:', error);
+                        }
+
+
+
                     }}
                     userLimits={userLimits}
                 />
             </Box>
 
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs value={tabValue} onChange={handleTabChange}>
-                    <Tab label="Pending Requests" />
-                    <Tab label="Approved Requests" />
-                    <Tab label="Rejected Requests" />
-                </Tabs>
-            </Box>
-
-            <Box sx={{ pt: 3 }}>
-                {tabValue === 0 && (
-                    <LeaveRequestList requests={pendingRequests} status="pending" />
-                )}
-                {tabValue === 1 && (
-                    <LeaveRequestList requests={approvedRequests} status="approved" />
-                )}
-                {tabValue === 2 && (
-                    <LeaveRequestList requests={rejectedRequests} status="rejected" />
-                )}
-            </Box>
         </Container>
     );
 };

@@ -37,9 +37,9 @@ export async function POST(req: Request) {
     }
 
     try {
-        const { name, email, mobile, role, department, position, manager, password } = await req.json();
+        const { name, email, mobile, role, department, manager, password } = await req.json();
 
-        if (!name || !email || !mobile || !role || !department || !position) {
+        if (!name || !email || !mobile || !role || !department) {
             return NextResponse.json({ error: 'Required fields are missing' }, { status: 400 });
         }
 
@@ -58,7 +58,6 @@ export async function POST(req: Request) {
             mobile,
             role,
             department,
-            position,
             manager: manager || null,
             password: password,
             monthlyLimits: {

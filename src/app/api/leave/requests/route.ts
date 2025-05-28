@@ -129,6 +129,7 @@ export async function POST(req: Request) {
                 return NextResponse.json({ error: 'Invalid request type' }, { status: 400 });
         }
 
+
         // Calculate total hours for time-based requests
         let totalHours: number | undefined;
         if (type === 'half-day' || type === 'gate-pass' || type === 'late-pass') {
@@ -154,9 +155,11 @@ export async function POST(req: Request) {
         switch (type) {
             case 'half-day':
                 user.monthlyLimits.halfDayLeaves -= 1;
+                user.monthlyLimits.fullDayLeaves -= 1;
                 break;
             case 'full-day':
                 user.monthlyLimits.fullDayLeaves -= 1;
+                user.monthlyLimits.halfDayLeaves -= 2;
                 break;
             case 'gate-pass':
                 user.monthlyLimits.gatePasses -= 1;

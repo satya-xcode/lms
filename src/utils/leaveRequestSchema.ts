@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // utils/validationSchemas.ts
 import * as yup from 'yup';
 import { LeaveRequestType } from '@/models/LeaveRequest';
@@ -15,12 +16,14 @@ export const leaveRequestSchemas = {
             .min(yup.ref('startTime'), 'End time must be after start time')
             .test(
                 'is-half-day',
-                'Half-day leave should be approximately 4 hours',
+                'Half-day leave should be exactly 4 hours',
                 function (endTime) {
                     const startTime = this.parent.startTime;
                     if (!startTime || !endTime) return true;
                     const diffHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
-                    return diffHours >= 3.5 && diffHours <= 4.5;
+                    // Changed to exactly 2 hours (±10 minutes tolerance)
+                    // return diffHours >= 1.83 && diffHours <= 2.17; // for 2 hours
+                    return diffHours >= 3.5 && diffHours <= 4.5; // for 4 hours
                 }
             ),
     }),
@@ -59,17 +62,20 @@ export const leaveRequestSchemas = {
     }),
     'late-pass': yup.object().shape({
         ...commonFields,
-        startTime: yup.date().required('Start time is required'),
-        endTime: yup.date()
+        startTime: yup
+            .date()
+            .required('Start time is required'),
+        endTime: yup
+            .date()
             .required('End time is required')
             .min(yup.ref('startTime'), 'End time must be after start time')
             .test(
                 'is-valid-duration',
-                'Late pass duration must be between 1 minute and 30 minutes',
-                function (endTime) {
-                    const startTime = this.parent.startTime;
-                    if (!startTime || !endTime) return true;
-                    const diffMinutes = (endTime.getTime() - startTime.getTime()) / (1000 * 60);
+                'Late pass duration must be between 1 and 30 minutes',
+                function (endTime: any) {
+                    const { startTime } = this.parent;
+                    if (!startTime || !endTime) return true; // Skip if one is missing; required check handles it
+                    const diffMinutes = (endTime - startTime) / (1000 * 60); // Convert milliseconds to minutes
                     return diffMinutes >= 1 && diffMinutes <= 30;
                 }
             ),

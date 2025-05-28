@@ -9,7 +9,6 @@ export interface IUser {
     role: 'admin' | 'staff' | 'manager';
     manager?: Schema.Types.ObjectId;
     department: string;
-    position: string;
     joinDate: Date;
     isActive: boolean;
     leaveBalance: number;
@@ -36,7 +35,6 @@ const userSchema = new Schema<IUser>({
     },
     manager: { type: Schema.Types.ObjectId, ref: 'User' },
     department: { type: String, required: true },
-    position: { type: String, required: true },
     joinDate: { type: Date, default: Date.now },
     isActive: { type: Boolean, default: true },
     leaveBalance: { type: Number, default: 1 },

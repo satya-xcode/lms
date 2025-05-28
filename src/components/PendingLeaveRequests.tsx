@@ -16,106 +16,166 @@ import {
     Typography,
     Alert,
     CircularProgress,
-
+    Chip,
+    Box
 } from '@mui/material';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { format, formatDistance, formatDuration, intervalToDuration } from 'date-fns';
 
 type LoadingState = {
     requestId: string;
     actionType: 'approve' | 'reject';
 } | null;
 
+const getLeaveTypeDetails = (request: any) => {
+    const startDate = new Date(request.startDate);
+    const endDate = new Date(request.endDate);
+
+    switch (request.type) {
+        case 'half-day':
+            return {
+                label: 'Half Day',
+                color: 'primary',
+                duration: `${format(startDate, 'hh:mm a')} - ${format(endDate, 'hh:mm a')}`,
+                details: `Total: ${formatDistance(startDate, endDate)}`
+            };
+        case 'full-day':
+            return {
+                label: 'Full Day',
+                color: 'secondary',
+                duration: format(startDate, 'PP'),
+                details: request.startDate === request.endDate
+                    ? '1 day'
+                    : `${formatDistance(startDate, endDate)} (${format(startDate, 'PP')} - ${format(endDate, 'PP')})`
+            };
+        case 'gate-pass':
+            const gatePassDuration = intervalToDuration({ start: startDate, end: endDate });
+            return {
+                label: 'Gate Pass',
+                color: 'info',
+                duration: `${format(startDate, 'hh:mm a')} - ${format(endDate, 'hh:mm a')}`,
+                details: `Duration: ${gatePassDuration.hours}h`
+            };
+        case 'late-pass':
+            const latePassDuration = intervalToDuration({ start: startDate, end: endDate });
+            return {
+                label: 'Late Pass',
+                color: 'warning',
+                duration: `${format(startDate, 'hh:mm a')} - ${format(endDate, 'hh:mm a')}`,
+                details: `Late by: ${latePassDuration.minutes}m`
+            };
+        default:
+            return {
+                label: request.type,
+                color: 'default',
+                duration: `${format(startDate, 'PP')} - ${format(endDate, 'PP')}`,
+                details: ''
+            };
+    }
+};
+
 export default function PendingLeaveRequests({ requests }: { requests: any }) {
     const [loadingState, setLoadingState] = useState<LoadingState>(null);
-
-    const { approveLeaveRequest, rejectLeaveRequest, isLoading } = useManager({});
+    const { approveLeaveRequest, rejectLeaveRequest } = useManager({});
 
     async function handleAction(_id: string, actionType: 'approve' | 'reject') {
         setLoadingState({ requestId: _id, actionType });
 
         try {
             if (actionType === 'approve') {
-                await approveLeaveRequest(_id);
                 const res: any = await approveLeaveRequest(_id);
-                toast.success(res.message, { richColors: true })
-
+                toast.success(res.message, { richColors: true });
             } else {
                 const res: any = await rejectLeaveRequest(_id);
-                toast.success(res.message, { richColors: true })
-
+                toast.success(res.message, { richColors: true });
             }
         } catch (err: any) {
-            toast.error(err?.message || 'Something went wrong', { richColors: true })
-
+            toast.error(err?.message || 'Something went wrong', { richColors: true });
         } finally {
             setLoadingState(null);
         }
     }
 
     if (requests.length === 0) {
-        return <Typography color='error' variant='body2'>No pending leave requests</Typography>;
+        return <Alert severity="info">No pending leave requests</Alert>;
     }
 
-
-
     return (
-        <>
+        <TableContainer component={Paper} variant='outlined'>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Staff</TableCell>
+                        <TableCell>Type</TableCell>
+                        <TableCell>Reason</TableCell>
+                        <TableCell>Date/Time</TableCell>
+                        <TableCell>Duration</TableCell>
+                        <TableCell>Actions</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {requests.map((request: any) => {
+                        const { label, color, duration, details } = getLeaveTypeDetails(request);
+                        const isApproving = loadingState?.requestId === request._id &&
+                            loadingState?.actionType === 'approve';
+                        const isRejecting = loadingState?.requestId === request._id &&
+                            loadingState?.actionType === 'reject';
 
-            <TableContainer component={Paper} variant='outlined'>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Staff Name</TableCell>
-                            <TableCell>Department</TableCell>
-                            <TableCell>Reason</TableCell>
-                            <TableCell>Duration</TableCell>
-                            <TableCell>Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {requests.map((request: any) => {
-                            const isApproving = loadingState?.requestId === request._id &&
-                                loadingState?.actionType === 'approve';
-                            const isRejecting = loadingState?.requestId === request._id &&
-                                loadingState?.actionType === 'reject';
+                        return (
+                            <TableRow key={request._id}>
+                                <TableCell>
+                                    <Box>
+                                        <Typography fontWeight="medium">{request.staff.name}</Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                            {request.staff.department}
+                                        </Typography>
+                                    </Box>
+                                </TableCell>
+                                <TableCell>
+                                    <Chip label={label} color={color} size="small" />
+                                </TableCell>
+                                <TableCell>
+                                    <Typography noWrap sx={{ maxWidth: 200 }}>
+                                        {request.reason}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell>
+                                    {duration}
 
-                            return (
-                                <TableRow key={request._id}>
-                                    <TableCell>{request.staff.name}</TableCell>
-                                    <TableCell>{request.staff.department}</TableCell>
-                                    <TableCell>{request.reason}</TableCell>
-                                    <TableCell>
-                                        {new Date(request.startDate).toLocaleDateString()} - {' '}
-                                        {new Date(request.endDate).toLocaleDateString()}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button
-                                            color="success"
-                                            onClick={() => handleAction(request._id, 'approve')}
-                                            disabled={isApproving || isRejecting}
-                                            loading={isApproving}
-                                            startIcon={<CheckCircle sx={{ color: '#34C759' }} />}
-                                        >
-                                            Approve
-                                        </Button>
-                                        <Button
-                                            color="error"
-                                            onClick={() => handleAction(request._id, 'reject')}
-                                            disabled={isApproving || isRejecting}
-                                            sx={{ ml: 1 }}
-                                            loading={isRejecting}
-                                            startIcon={<Cancel sx={{ color: '#FF3B3F' }} />}
-                                        >
-                                            Reject
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            );
-                        })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </>
+                                </TableCell>
+                                <TableCell>
+                                    {details}
+                                    {/* {request.totalHours} */}
+                                </TableCell>
+                                <TableCell>
+                                    <Button
+                                        variant="outlined"
+                                        color="success"
+                                        onClick={() => handleAction(request._id, 'approve')}
+                                        disabled={isApproving || isRejecting}
+                                        startIcon={isApproving ? <CircularProgress size={16} /> : <CheckCircle />}
+                                        size="small"
+                                    >
+                                        Approve
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        color="error"
+                                        onClick={() => handleAction(request._id, 'reject')}
+                                        disabled={isApproving || isRejecting}
+                                        sx={{ ml: 1 }}
+                                        startIcon={isRejecting ? <CircularProgress size={16} /> : <Cancel />}
+                                        size="small"
+                                    >
+                                        Reject
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        );
+                    })}
+                </TableBody>
+            </Table>
+        </TableContainer>
     );
 }
