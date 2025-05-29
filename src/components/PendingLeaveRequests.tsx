@@ -49,6 +49,13 @@ const getLeaveTypeDetails = (request: any) => {
                     ? '1 day'
                     : `${formatDistance(startDate, endDate)} (${format(startDate, 'PP')} - ${format(endDate, 'PP')})`
             };
+        case 'additional-leave':
+            return {
+                label: 'Additional Leave',
+                color: 'success',
+                duration: `${format(startDate, 'PP')} - ${format(endDate, 'PP')}`,
+                details: `Total: ${formatDistance(startDate, endDate)}`,
+            };
         case 'gate-pass':
             const gatePassDuration = intervalToDuration({ start: startDate, end: endDate });
             return {
@@ -79,12 +86,12 @@ export default function PendingLeaveRequests({ requests }: { requests: any }) {
     const [loadingState, setLoadingState] = useState<LoadingState>(null);
     const { approveLeaveRequest, rejectLeaveRequest } = useManager({});
 
-    async function handleAction(_id: string, actionType: 'approve' | 'reject') {
+    async function handleAction(_id: string, actionType: 'approve' | 'reject', requestType: string,) {
         setLoadingState({ requestId: _id, actionType });
 
         try {
             if (actionType === 'approve') {
-                const res: any = await approveLeaveRequest(_id);
+                const res: any = await approveLeaveRequest(_id, requestType);
                 toast.success(res.message, { richColors: true });
             } else {
                 const res: any = await rejectLeaveRequest(_id);
@@ -152,7 +159,7 @@ export default function PendingLeaveRequests({ requests }: { requests: any }) {
                                     <Button
                                         variant="outlined"
                                         color="success"
-                                        onClick={() => handleAction(request._id, 'approve')}
+                                        onClick={() => handleAction(request._id, 'approve', request.type)}
                                         disabled={isApproving || isRejecting}
                                         startIcon={isApproving ? <CircularProgress size={16} /> : <CheckCircle />}
                                         size="small"
@@ -162,7 +169,7 @@ export default function PendingLeaveRequests({ requests }: { requests: any }) {
                                     <Button
                                         variant="outlined"
                                         color="error"
-                                        onClick={() => handleAction(request._id, 'reject')}
+                                        onClick={() => handleAction(request._id, 'reject', request.type)}
                                         disabled={isApproving || isRejecting}
                                         sx={{ ml: 1 }}
                                         startIcon={isRejecting ? <CircularProgress size={16} /> : <Cancel />}

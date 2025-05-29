@@ -21,6 +21,7 @@ interface UserDetails {
     department: string;
     position: string;
     leaveBalance: number;
+    additionalLeave: number
     monthlyLimits: MonthlyLimits;
     manager?: {
         id: string;

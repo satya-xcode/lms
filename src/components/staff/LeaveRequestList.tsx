@@ -25,6 +25,7 @@ const LeaveRequestList: React.FC<LeaveRequestListProps> = ({ requests, status })
         switch (type) {
             case 'half-day': return 'Half Day Leave';
             case 'full-day': return 'Full Day Leave';
+            case 'additional-leave': return 'Additional Leave';
             case 'gate-pass': return 'Gate Pass';
             case 'late-pass': return 'Late Pass';
             default: return type;
@@ -42,6 +43,9 @@ const LeaveRequestList: React.FC<LeaveRequestListProps> = ({ requests, status })
     const formatDateRange = (start: Date, end: Date, type: LeaveRequestType) => {
         if (type === 'full-day') {
             return format(new Date(start), 'MMM dd, yyyy');
+        }
+        if (type === 'additional-leave') {
+            return `${format(new Date(start), 'MMM dd, hh:mm a')} - ${format(new Date(end), 'MMM dd, hh:mm a')}`;
         }
         return `${format(new Date(start), 'MMM dd, hh:mm a')} - ${format(new Date(end), 'hh:mm a')}`;
     };

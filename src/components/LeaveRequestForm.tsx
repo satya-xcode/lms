@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 // import * as Yup from 'yup';
 import {
+    Alert,
     Box,
     Button,
     Card,
@@ -63,6 +64,11 @@ const LeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, userLimit
                 disabled: userLimits.fullDayLeaves <= 0
             },
             {
+                value: 'additional-leave',
+                label: `Additional Leave (No limits)`,
+                disabled: false
+            },
+            {
                 value: 'gate-pass',
                 label: `Gate Pass (${userLimits.gatePasses} remaining)`,
                 disabled: userLimits.gatePasses <= 0
@@ -90,7 +96,11 @@ const LeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, userLimit
                         validationSchema={getValidationSchema()}
                         onSubmit={async (values, { setSubmitting, resetForm }) => {
                             try {
-                                await onSubmit(values);
+                                // await onSubmit(values);
+                                await onSubmit({
+                                    ...values,
+                                    type: requestType // Ensure we use the current request type
+                                });
                                 resetForm();
                             } finally {
                                 setSubmitting(false);
@@ -126,6 +136,11 @@ const LeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, userLimit
                                                 ))}
                                             </Select>
                                         </FormControl>
+                                        {requestType === 'additional-leave' && (
+                                            <Alert severity="info" sx={{ mt: 2 }}>
+                                                Additional leaves require manager approval and have no monthly limits.
+                                            </Alert>
+                                        )}
                                     </Grid>
 
                                     <Grid size={{ xs: 12 }}>
@@ -140,8 +155,7 @@ const LeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, userLimit
                                             helperText={<ErrorMessage name="reason" />}
                                         />
                                     </Grid>
-
-                                    {requestType === 'full-day' && (
+                                    {(requestType === 'full-day' || requestType === 'additional-leave') && (
                                         <>
                                             <Grid size={{ xs: 12, sm: 6 }}>
                                                 <DatePicker
@@ -153,6 +167,7 @@ const LeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, userLimit
                                                             fullWidth: true,
                                                             error: touched.startDate && !!errors.startDate,
                                                             helperText: touched.startDate && errors.startDate,
+                                                            required: true
                                                         },
                                                     }}
                                                 />
@@ -168,12 +183,14 @@ const LeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, userLimit
                                                             fullWidth: true,
                                                             error: touched.endDate && !!errors.endDate,
                                                             helperText: touched.endDate && errors.endDate,
+                                                            required: true
                                                         },
                                                     }}
                                                 />
                                             </Grid>
                                         </>
                                     )}
+
 
                                     {(requestType === 'half-day' || requestType === 'gate-pass' || requestType === 'late-pass') && (
                                         <>
@@ -214,10 +231,16 @@ const LeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, userLimit
                                             <Button
                                                 type="submit"
                                                 variant="contained"
-                                                color="primary"
+                                                color={requestType === 'additional-leave' ? 'success' : 'primary'}
                                                 disabled={isSubmitting}
+                                                size="large"
                                             >
-                                                {isSubmitting ? 'Submitting...' : 'Submit Request'}
+                                                {isSubmitting ? 'Submitting...' : (
+                                                    <>
+                                                        {requestType === 'additional-leave' ?
+                                                            'Request Additional Leave' : 'Submit Request'}
+                                                    </>
+                                                )}
                                             </Button>
                                         </Box>
                                     </Grid>

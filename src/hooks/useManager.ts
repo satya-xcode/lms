@@ -7,12 +7,12 @@ export const useManager = ({ managerId }: { managerId?: string }) => {
 
     const { data, error, isLoading, mutate } = useSWR(key);
 
-    const approveLeaveRequest = async (requestId: string) => {
+    const approveLeaveRequest = async (requestId: string, requestType: string) => {
         try {
             // Optional: optimistic update
             const optimisticData = data?.data?.filter((req: any) => req._id !== requestId);
             mutate(optimisticData, false); // optimistic update (disable revalidation)
-            const response = await axios.post(`/api/leave/${requestId}/approve`);
+            const response = await axios.post(`/api/leave/${requestId}/${requestType}/approve`);
             mutate(); // revalidate
             return response.data;
         } catch (err) {

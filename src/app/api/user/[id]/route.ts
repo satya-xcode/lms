@@ -38,6 +38,7 @@ export async function GET(
             role: user.role,
             department: user.department,
             leaveBalance: user.leaveBalance,
+            additionalLeave: user.additionalLeave,
             monthlyLimits: user.monthlyLimits,
             manager: user.manager,
             joinDate: user.joinDate,

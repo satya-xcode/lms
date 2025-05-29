@@ -6,7 +6,7 @@ import { useCallback, useMemo } from "react";
 import useSWR from "swr";
 
 type CreateLeaveRequestInput = {
-    type: 'half-day' | 'full-day' | 'gate-pass' | 'late-pass';
+    type: 'half-day' | 'full-day' | 'additional-leave' | 'gate-pass' | 'late-pass';
     reason: string;
     startDate?: Date;
     endDate?: Date;
@@ -39,7 +39,7 @@ export const useStaffLeaveRequests = ({ staffId, status, type }: {
             const requestData = {
                 type: data.type,
                 reason: data.reason,
-                ...(data.type === 'full-day'
+                ...(data.type === 'full-day' || data.type === 'additional-leave'
                     ? { startDate: data.startDate, endDate: data.endDate }
                     : { startTime: data.startTime, endTime: data.endTime }
                 )

@@ -34,9 +34,8 @@ const StaffDashboard = () => {
         latePasses: 2,
     };
 
-
     return (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Container maxWidth={false} sx={{ py: 4 }}>
             <Box sx={{ mb: 4 }}>
                 <LeaveDashboard
                     userLimits={userLimits}
@@ -47,24 +46,8 @@ const StaffDashboard = () => {
             <Box sx={{ mb: 4 }}>
                 <LeaveRequestForm
                     onSubmit={async (values) => {
-
+                        // console.log('ValueFromForm', values)
                         try {
-                            // Transform the data based on type
-                            // const requestData = {
-                            //     type: values.type,
-                            //     reason: values.reason,
-                            //     ...(values.type === 'full-day'
-                            //         ? {
-                            //             startDate: values.startDate,
-                            //             endDate: values.endDate
-                            //         }
-                            //         : {
-                            //             startTime: values.startTime,
-                            //             endTime: values.endTime
-                            //         }
-                            //     )
-                            // };
-
                             // await axios.post('/api/leave/requests', requestData);
                             await createStaffLeaveRequest(values)
                             toast.success('Leave request submitted successfully!', { richColors: true });
@@ -73,9 +56,6 @@ const StaffDashboard = () => {
                             toast.error(error.response?.data?.error || 'Failed to submit leave request', { richColors: true });
                             console.error('Submission error:', error);
                         }
-
-
-
                     }}
                     userLimits={userLimits}
                 />

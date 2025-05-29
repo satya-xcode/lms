@@ -52,7 +52,7 @@ const StaffManagement = () => {
         mobile: Yup.string().required('Mobile number is required'),
         role: Yup.string().oneOf(['staff', 'manager']).required('Role is required'),
         department: Yup.string().required('Department is required'),
-        position: Yup.string().required('Position is required'),
+
         joinDate: Yup.date().required('Join date is required'),
         password: Yup.string()
             .min(6, 'Password must be at least 6 characters')
@@ -66,7 +66,6 @@ const StaffManagement = () => {
         mobile: '',
         role: 'staff',
         department: '',
-        position: '',
         manager: '',
         joinDate: new Date(),
         password: '',
@@ -269,16 +268,6 @@ const StaffManagement = () => {
                                         <Grid size={{ xs: 12, sm: 6 }}>
                                             <Field
                                                 as={TextField}
-                                                name="position"
-                                                label="Position"
-                                                fullWidth
-                                                error={touched.position && !!errors.position}
-                                                helperText={touched.position && errors.position}
-                                            />
-                                        </Grid>
-                                        <Grid size={{ xs: 12, sm: 6 }}>
-                                            <Field
-                                                as={TextField}
                                                 name="department"
                                                 label="Department"
                                                 fullWidth
@@ -327,7 +316,7 @@ const StaffManagement = () => {
                                                     textField: {
                                                         fullWidth: true,
                                                         error: touched.joinDate && !!errors.joinDate,
-                                                        helperText: touched.joinDate && errors.joinDate,
+                                                        helperText: String(touched.joinDate) && String(errors.joinDate),
                                                     },
                                                 }}
                                             />

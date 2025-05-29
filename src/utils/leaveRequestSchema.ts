@@ -43,6 +43,11 @@ export const leaveRequestSchemas = {
                 }
             ),
     }),
+    'additional-leave': yup.object().shape({
+        ...commonFields,
+        startDate: yup.date().required('Start date is required'),
+        endDate: yup.date().required('End date is required').min(yup.ref('startDate'), 'End date must be after start date'),
+    }),
     'gate-pass': yup.object().shape({
         ...commonFields,
         startTime: yup.date().required('Start time is required'),
@@ -51,12 +56,13 @@ export const leaveRequestSchemas = {
             .min(yup.ref('startTime'), 'End time must be after start time')
             .test(
                 'is-valid-duration',
-                'Gate pass duration must be between 1 minute and 2 hours',
+                'Gate pass duration must be 2 hours',
                 function (endTime) {
                     const startTime = this.parent.startTime;
                     if (!startTime || !endTime) return true;
-                    const diffMinutes = (endTime.getTime() - startTime.getTime()) / (1000 * 60);
-                    return diffMinutes >= 1 && diffMinutes <= 120;
+                    const diffHours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
+                    return diffHours >= 1.83 && diffHours <= 2.17;
+                    // return diffMinutes >= 1 && diffMinutes <= 120;
                 }
             ),
     }),
