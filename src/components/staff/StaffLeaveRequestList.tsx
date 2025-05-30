@@ -14,13 +14,14 @@ import {
 } from '@mui/material';
 import { format, formatDistance } from 'date-fns';
 import { LeaveRequestType } from '@/models/LeaveRequest';
+import theme from '@/theme/theme';
 
 interface LeaveRequestListProps {
     requests: any[];
     status: 'pending' | 'approved' | 'rejected';
 }
 
-const LeaveRequestList: React.FC<LeaveRequestListProps> = ({ requests, status }) => {
+const StaffLeaveRequestList: React.FC<LeaveRequestListProps> = ({ requests, status }) => {
     const getTypeLabel = (type: LeaveRequestType) => {
         switch (type) {
             case 'half-day': return 'Half Day Leave';
@@ -53,7 +54,7 @@ const LeaveRequestList: React.FC<LeaveRequestListProps> = ({ requests, status })
     return (
         <Box>
             {requests.length === 0 ? (
-                <Typography variant="body1" color="textSecondary" align="center">
+                <Typography variant="body1" color="error" align="center">
                     No {status} requests found
                 </Typography>
             ) : (
@@ -83,7 +84,7 @@ const LeaveRequestList: React.FC<LeaveRequestListProps> = ({ requests, status })
 
                                     <Divider sx={{ my: 1.5 }} />
 
-                                    <Box display="flex" justifyContent="space-between">
+                                    <Box display="flex" justifyContent="space-between" gap={theme.spacing(2)}>
                                         <Typography variant="caption" color="textSecondary">
                                             Submitted {formatDistance(new Date(request.createdAt), new Date(), { addSuffix: true })}
                                         </Typography>
@@ -93,6 +94,13 @@ const LeaveRequestList: React.FC<LeaveRequestListProps> = ({ requests, status })
                                             </Typography>
                                         )}
                                     </Box>
+                                    {
+                                        status === 'pending' && (
+                                            <Typography variant="caption" color="warning">
+                                                Wait For Manager Response
+                                            </Typography>
+                                        )
+                                    }
                                 </CardContent>
                             </Card>
                         </Grid>
@@ -103,4 +111,4 @@ const LeaveRequestList: React.FC<LeaveRequestListProps> = ({ requests, status })
     );
 };
 
-export default LeaveRequestList;
+export default StaffLeaveRequestList;

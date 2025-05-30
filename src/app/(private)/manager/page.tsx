@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import PendingLeaveRequests from '@/components/PendingLeaveRequests';
+import PendingLeaveRequests from '@/components/manager/PendingLeaveRequests';
 import { useManager } from '@/hooks/useManager';
 import { Card, CardContent, Stack, Skeleton } from '@mui/material';
 import { useSession } from 'next-auth/react';

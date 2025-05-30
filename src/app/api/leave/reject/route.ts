@@ -5,10 +5,11 @@ import LeaveRequest from '@/models/LeaveRequest';
 import { connectToDB } from '@/lib/mongoose';
 import { authOptions } from '@/lib/auth/authOptions';
 
-export async function POST(req: NextRequest, { params }: { params: any }) {
+export async function POST(req: NextRequest) {
     try {
         await connectToDB();
-
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id');
         const session: any = await getServerSession(authOptions);
         const userId = String(session?.user?.id);
 
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest, { params }: { params: any }) {
             return NextResponse.json({ error: 'Unauthorized: No session' }, { status: 401 });
         }
 
-        const leaveRequest = await LeaveRequest.findById(params.id);
+        const leaveRequest = await LeaveRequest.findById(id);
         if (!leaveRequest) {
             return NextResponse.json({ error: 'Leave request not found' }, { status: 404 });
         }

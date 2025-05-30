@@ -3,16 +3,17 @@
 'use client';
 
 import React from 'react';
-import { Box, Container } from '@mui/material';
+import { Stack } from '@mui/material';
 
-import LeaveRequestForm from '@/components/LeaveRequestForm';
+import LeaveRequestForm from '@/components/staff/StaffLeaveRequestForm';
 
 import { useStaffLeaveRequests } from '@/hooks/useStaffLeaveRequests';
-import LeaveDashboard from '@/components/staff/LeaveDashboard';
+import StaffLeaveDashboard from '@/components/staff/StaffLeaveDashboard';
 
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import theme from '@/theme/theme';
 
 const StaffDashboard = () => {
     // const { data: session }: any = useSession();
@@ -35,33 +36,26 @@ const StaffDashboard = () => {
     };
 
     return (
-        <Container maxWidth={false} sx={{ py: 4 }}>
-            <Box sx={{ mb: 4 }}>
-                <LeaveDashboard
-                    userLimits={userLimits}
-                    totalLimits={totalLimits}
-                />
-            </Box>
+        <Stack spacing={theme.spacing(2)}>
+            <StaffLeaveDashboard
+                userLimits={userLimits}
+                totalLimits={totalLimits}
+            />
+            <LeaveRequestForm
+                onSubmit={async (values) => {
+                    try {
 
-            <Box sx={{ mb: 4 }}>
-                <LeaveRequestForm
-                    onSubmit={async (values) => {
-                        // console.log('ValueFromForm', values)
-                        try {
-                            // await axios.post('/api/leave/requests', requestData);
-                            await createStaffLeaveRequest(values)
-                            toast.success('Leave request submitted successfully!', { richColors: true });
-                            router.refresh(); // Refresh the page to update the leave list
-                        } catch (error: any) {
-                            toast.error(error.response?.data?.error || 'Failed to submit leave request', { richColors: true });
-                            console.error('Submission error:', error);
-                        }
-                    }}
-                    userLimits={userLimits}
-                />
-            </Box>
-
-        </Container>
+                        const res = await createStaffLeaveRequest(values)
+                        toast.success(res.message, { richColors: true });
+                        router.refresh(); // Refresh the page to update the leave list
+                    } catch (error: any) {
+                        toast.error(error.response?.data?.error || 'Failed to submit leave request', { richColors: true });
+                        console.error('Submission error:', error);
+                    }
+                }}
+                userLimits={userLimits}
+            />
+        </Stack>
     );
 };
 

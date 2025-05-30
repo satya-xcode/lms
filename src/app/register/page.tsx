@@ -6,7 +6,7 @@ import LoadingProgress from '@/components/LoadingProgress';
 import RegistrationForm from './components/RegistrationForm';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/fetcher';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/shared/Navbar';
 import theme from '@/theme/theme';
 
 interface Manager {

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Button, Container, Typography, Box, Card, CardContent } from '@mui/material';
 import Link from 'next/link';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/shared/Navbar';
 
 export default function HomePage() {
   const { data: session, status }: any = useSession();

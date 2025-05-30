@@ -1,5 +1,5 @@
 'use client'
-import DashboardLayout from '@/components/DashboardLayout'
+import DashboardLayout from '@/components/shared/DashboardLayout'
 import React from 'react'
 
 function Layout({ children }: { children: React.ReactNode }) {

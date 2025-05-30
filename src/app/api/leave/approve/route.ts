@@ -7,10 +7,16 @@ import User from '@/models/User';
 import { connectToDB } from '@/lib/mongoose';
 import { authOptions } from '@/lib/auth/authOptions';
 
-export async function POST(req: Request, { params }: { params: any }) {
+export async function POST(req: Request) {
     await connectToDB();
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    const requestType = searchParams.get('requestType')
 
-    const { id, requestType } = await params;
+    console.log(
+        `Received request to ${requestType} leave request with id: ${id} from server-sid`
+    )
+
     const session: any = await getServerSession(authOptions);
 
     if (!requestType) {

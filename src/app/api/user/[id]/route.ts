@@ -35,6 +35,7 @@ export async function GET(
             id: user._id,
             name: user.name,
             email: user.email,
+            mobile: user.mobile,
             role: user.role,
             department: user.department,
             leaveBalance: user.leaveBalance,

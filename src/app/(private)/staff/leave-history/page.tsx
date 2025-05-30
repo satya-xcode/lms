@@ -1,11 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 'use client'
 
 import { useStaffLeaveRequests } from '@/hooks/useStaffLeaveRequests'
 import { Box, Stack, Tab, Tabs } from '@mui/material'
 import React from 'react'
-import LeaveRequestList from '@/components/staff/LeaveRequestList'
+import LeaveRequestList from '@/components/staff/StaffLeaveRequestList'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
+import theme from '@/theme/theme'
 
 function LeaveRequesthistory() {
 
@@ -33,7 +34,7 @@ function LeaveRequesthistory() {
 
 
     return (
-        <Stack>
+        <Stack spacing={theme.spacing(2)}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={tabValue} onChange={handleTabChange}>
                     <Tab label="Pending Requests" />
@@ -42,7 +43,7 @@ function LeaveRequesthistory() {
                 </Tabs>
             </Box>
 
-            <Box sx={{ pt: 3 }}>
+            <Box sx={{}}>
                 {tabValue === 0 && (
                     <LeaveRequestList requests={pendingRequests} status="pending" />
                 )}

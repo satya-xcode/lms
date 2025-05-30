@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-import LeaveRequestForm from '@/components/LeaveRequestForm'
+import LeaveRequestForm from '@/components/staff/StaffLeaveRequestForm'
 import { Box } from '@mui/material';
 import React from 'react'
 // import axios from 'axios';
@@ -19,25 +19,8 @@ function LeaveFormSection() {
     // Handle form submission
     const handleSubmit = async (values: LeaveRequestFormValues) => {
         try {
-            // Transform the data based on type
-            // const requestData = {
-            //     type: values.type,
-            //     reason: values.reason,
-            //     ...(values.type === 'full-day'
-            //         ? {
-            //             startDate: values.startDate,
-            //             endDate: values.endDate
-            //         }
-            //         : {
-            //             startTime: values.startTime,
-            //             endTime: values.endTime
-            //         }
-            //     )
-            // };
-
-            // await axios.post('/api/leave/requests', requestData);
-            await createStaffLeaveRequest(values)
-            toast.success('Leave request submitted successfully!');
+            const res = await createStaffLeaveRequest(values)
+            toast.success(res.message, { richColors: true });
             router.refresh(); // Refresh the page to update the leave list
         } catch (error: any) {
             toast.error(error.response?.data?.error || 'Failed to submit leave request');
@@ -54,12 +37,10 @@ function LeaveFormSection() {
     };
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <LeaveRequestForm
-                onSubmit={handleSubmit}
-                userLimits={userLimits}
-            />
-        </Box>
+        <LeaveRequestForm
+            onSubmit={handleSubmit}
+            userLimits={userLimits}
+        />
     )
 }
 

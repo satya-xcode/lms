@@ -16,6 +16,7 @@ import {
     InputLabel,
     MenuItem,
     Select,
+    Stack,
     TextField,
     Typography
 } from '@mui/material';
@@ -25,6 +26,8 @@ import { LeaveRequestType } from '@/models/LeaveRequest';
 import { LeaveRequestFormValues, leaveRequestSchemas } from '@/utils/leaveRequestSchema';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { useStaffLeaveRequests } from '@/hooks/useStaffLeaveRequests';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 interface LeaveRequestFormProps {
     onSubmit: (values: LeaveRequestFormValues) => Promise<void>;
     userLimits: {
@@ -35,7 +38,13 @@ interface LeaveRequestFormProps {
     };
 }
 
-const LeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, userLimits }) => {
+const StaffLeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, userLimits }) => {
+    const { user } = useCurrentUser()
+    const { data: pendingRequests } = useStaffLeaveRequests({
+        staffId: user?.id,
+        status: 'pending'
+    });
+
     const [requestType, setRequestType] = useState<LeaveRequestType>('half-day');
 
     const initialValues: LeaveRequestFormValues = {
@@ -52,31 +61,36 @@ const LeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, userLimit
     };
 
     const getAvailableTypes = () => {
-        const types: { value: LeaveRequestType; label: string; disabled: boolean }[] = [
+        const types: { value: LeaveRequestType; label: string; disabled: boolean, warningText: string }[] = [
             {
                 value: 'half-day',
                 label: `Half Day Leave (${userLimits.halfDayLeaves} remaining)`,
-                disabled: userLimits.halfDayLeaves <= 0
+                disabled: userLimits.halfDayLeaves <= 0 || pendingRequests.some((request: { type: string; }) => request.type === 'half-day'),
+                warningText: pendingRequests.some((request: { type: string; }) => request.type === 'half-day') ? 'You have a pending half-day leave request.' : '',
             },
             {
                 value: 'full-day',
                 label: `Full Day Leave (${userLimits.fullDayLeaves} remaining)`,
-                disabled: userLimits.fullDayLeaves <= 0
+                disabled: userLimits.fullDayLeaves <= 0 || pendingRequests.some((request: { type: string; }) => request.type === 'full-day'),
+                warningText: pendingRequests.some((request: { type: string; }) => request.type === 'full-day') ? 'You have a pending full-day leave request.' : '',
             },
             {
                 value: 'additional-leave',
                 label: `Additional Leave (No limits)`,
-                disabled: false
+                disabled: pendingRequests.some((request: { type: string; }) => request.type === 'additional-leave'),
+                warningText: pendingRequests.some((request: { type: string; }) => request.type === 'additional-leave') ? 'You have a pending additional-leave leave request.' : '',
             },
             {
                 value: 'gate-pass',
                 label: `Gate Pass (${userLimits.gatePasses} remaining)`,
-                disabled: userLimits.gatePasses <= 0
+                disabled: userLimits.gatePasses <= 0 || pendingRequests.some((request: { type: string; }) => request.type === 'gate-pass'),
+                warningText: pendingRequests.some((request: { type: string; }) => request.type === 'gate-pass') ? 'You have a pending gate-pass leave request.' : '',
             },
             {
                 value: 'late-pass',
                 label: `Late Pass (${userLimits.latePasses} remaining)`,
-                disabled: userLimits.latePasses <= 0
+                disabled: userLimits.latePasses <= 0 || pendingRequests.some((request: { type: string; }) => request.type === 'late-pass'),
+                warningText: pendingRequests.some((request: { type: string; }) => request.type === 'late-pass') ? 'You have a pending late-pass leave request.' : '',
             },
         ];
         return types;
@@ -131,7 +145,10 @@ const LeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, userLimit
                                                         value={type.value}
                                                         disabled={type.disabled}
                                                     >
-                                                        {type.label}
+                                                        <Stack>
+                                                            <Typography variant='body1'>{type.label}</Typography>
+                                                            <small style={{ color: 'red' }}>{type.warningText}</small>
+                                                        </Stack>
                                                     </MenuItem>
                                                 ))}
                                             </Select>
@@ -254,4 +271,4 @@ const LeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, userLimit
     );
 };
 
-export default LeaveRequestForm;
+export default StaffLeaveRequestForm;

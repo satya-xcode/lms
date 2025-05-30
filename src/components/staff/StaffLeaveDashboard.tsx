@@ -11,16 +11,22 @@ import {
     Chip,
     Avatar,
     useTheme,
-    Badge
+    Button,
+    Stack,
+    Drawer,
+    IconButton
 } from '@mui/material';
 import {
     AccessTime as HalfDayIcon,
     Event as FullDayIcon,
     ExitToApp as GatePassIcon,
     Schedule as LatePassIcon,
-    CalendarToday as CalendarIcon
+    Notifications,
+    Close
 } from '@mui/icons-material';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import LeaveRequestList from './StaffLeaveRequestList';
+import { useStaffLeaveRequests } from '@/hooks/useStaffLeaveRequests';
 
 interface LeaveDashboardProps {
     userLimits: {
@@ -37,13 +43,15 @@ interface LeaveDashboardProps {
     };
 }
 
-const LeaveDashboard: React.FC<LeaveDashboardProps> = ({ userLimits, totalLimits }) => {
+const StaffLeaveDashboard: React.FC<LeaveDashboardProps> = ({ userLimits, totalLimits }) => {
     const theme = useTheme();
     const { user } = useCurrentUser()
+    const [drawerOpen, setDrawerOpen] = React.useState(false);
+
     // Get current month name
     // console.log('AdditionalLeave', user?.additionalLeave)
-    const currentMonth = new Date().toLocaleString('default', { month: 'long' });
-    const currentYear = new Date().getFullYear();
+    // const currentMonth = new Date().toLocaleString('default', { month: 'long' });
+    // const currentYear = new Date().getFullYear();
 
     const leaveTypes = [
         {
@@ -93,23 +101,20 @@ const LeaveDashboard: React.FC<LeaveDashboardProps> = ({ userLimits, totalLimits
     const getRemainingText = (current: number) => {
         return current === 1 ? `${current} remaining` : `${current} remaining`;
     };
+    const { data: pendingRequests } = useStaffLeaveRequests({
+        staffId: user?.id,
+        status: 'pending'
+    });
 
     return (
-        <Card sx={{
-            borderRadius: 2,
-            boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-            transition: 'transform 0.2s',
-            '&:hover': {
-                transform: 'translateY(-2px)'
-            }
-        }}>
-            <CardContent>
-                <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+        <Card>
+            <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: theme.spacing(2) }}>
+                <Box display="flex" alignItems="center" justifyContent="space-between" >
                     <Typography variant="h6" fontWeight="bold" color="text.primary">
                         Leave Balance Overview
                     </Typography>
 
-                    <Badge
+                    {/* <Badge
                         badgeContent={
                             <CalendarIcon fontSize="small" sx={{ color: theme.palette.primary.main }} />
                         }
@@ -125,21 +130,30 @@ const LeaveDashboard: React.FC<LeaveDashboardProps> = ({ userLimits, totalLimits
                                 fontWeight: 'medium'
                             }}
                         />
-                    </Badge>
+                    </Badge> */}
+                    <Stack direction={'row'} alignItems={'center'} gap={theme.spacing(2)}>
+                        <Button startIcon={<Notifications />} onClick={() => setDrawerOpen(true)}>Your Raised Requests</Button>
+                        <Typography color='warning' fontWeight={'bold'}>
+                            {pendingRequests?.length || 0}
+                        </Typography>
+                    </Stack>
+
+
                 </Box>
 
-                <Divider sx={{ mb: 3 }} />
+                <Divider sx={{}} />
 
                 <Grid container spacing={3}>
                     {leaveTypes.map((type) => (
                         <Grid size={{ xs: 12, sm: 6, md: 3 }} key={type.id}>
                             <Box
+                                boxShadow={1}
                                 sx={{
                                     p: 2,
                                     borderRadius: 1,
                                     backgroundColor: theme.palette.background.paper,
                                     height: '100%',
-                                    borderLeft: `4px solid ${type.color}`
+                                    // borderLeft: `4px solid ${type.color}`
                                 }}
                             >
                                 <Box display="flex" alignItems="center" mb={1.5}>
@@ -185,13 +199,26 @@ const LeaveDashboard: React.FC<LeaveDashboardProps> = ({ userLimits, totalLimits
                         </Grid>
                     ))}
                 </Grid>
-
-                <Box mt={3} textAlign="center">
+                <Drawer
+                    open={drawerOpen}
+                    onClose={() => setDrawerOpen(false)}
+                    anchor="right"
+                    sx={{ width: 350 }}
+                >
+                    <Stack width={350} sx={{ bgcolor: 'primary.light', flex: 1, alignItems: 'center' }} p={theme.spacing(2)} gap={theme.spacing(2)}>
+                        <Stack spacing={theme.spacing(2)} direction={'row'} alignItems={'center'}>
+                            <Typography variant="h5" align='center' fontWeight={'bold'}>Your Raised Requests</Typography>
+                            <IconButton onClick={() => setDrawerOpen(false)}><Close /></IconButton>
+                        </Stack>
+                        <LeaveRequestList requests={pendingRequests} status="pending" />
+                    </Stack>
+                </Drawer>
+                <Box textAlign="center">
                     <Typography variant="caption" color="text.secondary">
                         * 1 Full Day Leave = 2 Half Day Leaves • Resets on 1st of each month
                     </Typography>
                 </Box>
-                <Box mt={2}>
+                <Box >
                     <Typography color='info' variant="subtitle1" fontWeight="medium">
                         Additional Leave
                     </Typography>
@@ -200,8 +227,8 @@ const LeaveDashboard: React.FC<LeaveDashboardProps> = ({ userLimits, totalLimits
                     </Typography>
                 </Box>
             </CardContent>
-        </Card>
+        </Card >
     );
 };
 
-export default LeaveDashboard;
+export default StaffLeaveDashboard;

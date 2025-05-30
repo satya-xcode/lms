@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 'use client';
 import React, { useState } from 'react';
-import { useSession } from 'next-auth/react';
 import {
     AppBar,
     Toolbar,
@@ -23,7 +22,8 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import Link from 'next/link';
-import SignOutButton from './SignOutButton';
+import SignOutButton from '../SignOutButton';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 const commonLinks = [
     { label: 'Home', href: '/' },
@@ -32,16 +32,17 @@ const commonLinks = [
 ];
 
 export default function Navbar() {
-    const { data: session, status }: any = useSession();
+    // const { data: session, status }: any = useSession();
+    const { isLoading, user } = useCurrentUser()
     const [dialogOpen, setDialogOpen] = useState(false);
 
     const handleOpen = () => setDialogOpen(true);
     const handleClose = () => setDialogOpen(false);
 
-    const authLinks = session?.user ? (
+    const authLinks = user ? (
         <>
             <ListItem>
-                <ListItemText primary={`${session.user.name} (${session.user.role})`} />
+                <ListItemText primary={`${user?.name} (${user?.role})`} />
             </ListItem>
             <ListItem>
                 <SignOutButton />
@@ -87,10 +88,10 @@ export default function Navbar() {
                         ))}
                         {status === 'loading' ? (
                             <CircularProgress color="inherit" size={24} />
-                        ) : session?.user ? (
+                        ) : user ? (
                             <>
                                 <Typography>
-                                    {session.user.name} ({session.user.role})
+                                    {user?.name} ({user?.role})
                                 </Typography>
                                 <SignOutButton />
                             </>
@@ -137,11 +138,11 @@ export default function Navbar() {
                         ))}
 
                         {
-                            status === 'loading' ? (
+                            isLoading ? (
                                 <Box sx={{ px: 2 }}>
                                     <CircularProgress color="inherit" size={20} thickness={4} />
                                 </Box>
-                            ) : session?.user ? (
+                            ) : user ? (
                                 <>
                                     <Box sx={{
                                         display: 'flex',
@@ -163,14 +164,14 @@ export default function Navbar() {
                                                 fontSize: '0.875rem'
                                             }}
                                         >
-                                            {session.user.name?.charAt(0) || session.user.email?.charAt(0)}
+                                            {user?.name?.charAt(0) || user?.email?.charAt(0)}
                                         </Avatar>
                                         <Typography variant="subtitle2" noWrap>
                                             <Box component="span" fontWeight="medium">
-                                                {session.user.name}
+                                                {user?.name}
                                             </Box>
                                             <Box component="span" color="text.secondary" ml={1} fontSize="0.75rem">
-                                                ({session.user.role})
+                                                ({user?.role})
                                             </Box>
                                         </Typography>
                                     </Box>
@@ -215,14 +216,14 @@ export default function Navbar() {
                 </DialogTitle>
                 <DialogContent>
                     <List>
-                        {commonLinks.map(({ label, href }) => (
+                        {commonLinks?.map(({ label, href }) => (
                             <ListItem key={href} disablePadding>
                                 <ListItemButton component={Link} href={href} onClick={handleClose}>
                                     <ListItemText primary={label} />
                                 </ListItemButton>
                             </ListItem>
                         ))}
-                        {status === 'loading' ? (
+                        {isLoading ? (
                             <ListItem>
                                 <CircularProgress size={24} />
                             </ListItem>

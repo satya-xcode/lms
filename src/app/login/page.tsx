@@ -20,7 +20,7 @@ import { LoginOutlined, Visibility, VisibilityOff } from '@mui/icons-material';
 import Link from 'next/link';
 import LoadingProgress from '@/components/LoadingProgress';
 import { useRouter } from 'next/navigation';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/shared/Navbar';
 import theme from '@/theme/theme';
 
 

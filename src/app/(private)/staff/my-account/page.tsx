@@ -1,9 +1,8 @@
-import React from 'react'
+// app/dashboard/account/page.tsx
+'use client';
 
-function page() {
-    return (
-        <div>page</div>
-    )
+import StaffAccountPage from "@/components/staff/StaffAccountPage";
+
+export default function AccountPage() {
+    return <StaffAccountPage />;
 }
-
-export default page
