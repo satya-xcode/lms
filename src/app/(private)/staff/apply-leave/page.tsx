@@ -1,19 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import LeaveRequestForm from '@/components/staff/StaffLeaveRequestForm'
-import { Box } from '@mui/material';
+
 import React from 'react'
 // import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { LeaveRequestFormValues } from '@/utils/leaveRequestSchema';
-import { useStaffLeaveRequests } from '@/hooks/useStaffLeaveRequests';
+
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useStaffLeaves } from '@/hooks/staff/useStaffLeaves';
 
 function LeaveFormSection() {
     const { user } = useCurrentUser()
 
-    const { createStaffLeaveRequest } = useStaffLeaveRequests({})
+    const { createStaffLeaveRequest } = useStaffLeaves({})
     const router = useRouter();
 
     // Handle form submission

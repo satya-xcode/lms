@@ -26,8 +26,9 @@ import { LeaveRequestType } from '@/models/LeaveRequest';
 import { LeaveRequestFormValues, leaveRequestSchemas } from '@/utils/leaveRequestSchema';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { useStaffLeaveRequests } from '@/hooks/useStaffLeaveRequests';
+
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useStaffLeaves } from '@/hooks/staff/useStaffLeaves';
 interface LeaveRequestFormProps {
     onSubmit: (values: LeaveRequestFormValues) => Promise<void>;
     userLimits: {
@@ -40,7 +41,7 @@ interface LeaveRequestFormProps {
 
 const StaffLeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, userLimits }) => {
     const { user } = useCurrentUser()
-    const { data: pendingRequests } = useStaffLeaveRequests({
+    const { data: pendingRequests } = useStaffLeaves({
         staffId: user?.id,
         status: 'pending'
     });

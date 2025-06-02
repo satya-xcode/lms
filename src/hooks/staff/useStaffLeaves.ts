@@ -14,12 +14,12 @@ type CreateLeaveRequestInput = {
     endTime?: Date;
 };
 
-export const useStaffLeaveRequests = ({ staffId, status, type }: {
+export const useStaffLeaves = ({ staffId, status, type }: {
     staffId?: string;
     status?: string;
     type?: string;
 }) => {
-    const shouldFetch = Boolean(staffId) && Boolean(status);
+    const shouldFetch = Boolean(staffId) && Boolean(status)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const queryParams = new URLSearchParams();
@@ -28,7 +28,7 @@ export const useStaffLeaveRequests = ({ staffId, status, type }: {
     if (type) queryParams.append('type', type);
 
     const key = useMemo(() => (
-        shouldFetch ? `/api/leave/requests?${queryParams.toString()}` : null
+        shouldFetch ? `/api/staffs/leaves?${queryParams.toString()}` : null
     ), [shouldFetch, queryParams]);
 
     const { data, error, isLoading, mutate } = useSWR(key);
@@ -45,7 +45,7 @@ export const useStaffLeaveRequests = ({ staffId, status, type }: {
                 )
             };
 
-            const response = await axios.post(`/api/leave/requests`, requestData);
+            const response = await axios.post(`/api/staffs/leaves`, requestData);
             mutate();
             return response.data;
         } catch (err) {

@@ -1,30 +1,72 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-'use client';
-import PendingLeaveRequests from '@/components/manager/PendingLeaveRequests';
-import { useManager } from '@/hooks/useManager';
-import { Card, CardContent, Stack, Skeleton } from '@mui/material';
-import { useSession } from 'next-auth/react';
+'use client'
+
+import { colors, Grid } from '@mui/material'
+import GroupIcon from '@mui/icons-material/Group'
+import EventAvailableIcon from '@mui/icons-material/EventAvailable'
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import { DashboardCard } from '@/components/manager/DashboardCard'
+import { useStaffsByManagers } from '@/hooks/manager/useStaffsByManagers'
+import { useCurrentUser } from '@/hooks/useCurrentUser'
+import { CloseTwoTone } from '@mui/icons-material'
+import { useLeavesManageByManager } from '@/hooks/manager/useLeavesManageByManager'
 
 export default function ManagerDashboard() {
-    const { data }: any = useSession()
-    const { data: pendingRequests, isLoading } = useManager({ managerId: data?.user?.id })
+    const { user } = useCurrentUser()
+    const { total: totalStaffs } = useStaffsByManagers({ managerId: String(user?.id) })
+    const { data: pendingLeaves } = useLeavesManageByManager({ managerId: user?.id, status: 'pending' })
+    const { data: approvedLeaves } = useLeavesManageByManager({ managerId: user?.id, status: 'approved' })
+    const { data: rejectedLeaves } = useLeavesManageByManager({ managerId: user?.id, status: 'rejected' })
     return (
-        <Card variant='outlined'>
-            <CardContent>
-                {isLoading ? (
-                    <Stack spacing={1}>
-                        <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
-                        <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
-                        <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
-                        <Skeleton sx={{ borderRadius: 1 }} variant="rectangular" height={50} />
-                    </Stack>
-                ) : (
-                    <PendingLeaveRequests requests={pendingRequests || []} />
-                )}
-            </CardContent>
-        </Card>
+        <>
+            {/* <Typography variant="h5" mb={3}>
+                Manager Dashboard
+            </Typography> */}
 
-    );
+            <Grid container spacing={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                    <DashboardCard
+                        title="Total Staffs"
+                        value={totalStaffs}
+                        icon={<GroupIcon />}
+                        color="#1976d2"
+                    />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                    <DashboardCard
+                        title="Total Leaves"
+                        value={parseInt(pendingLeaves?.length) + parseInt(approvedLeaves?.length) + parseInt(rejectedLeaves?.length)}
+                        icon={<EventAvailableIcon />}
+                        color="#9c27b0"
+                    />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                    <DashboardCard
+                        title="Approved Leaves"
+                        value={approvedLeaves?.length}
+                        icon={<CheckCircleIcon />}
+                        color="#2e7d32"
+                    />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                    <DashboardCard
+                        title="Pending Leaves"
+                        value={pendingLeaves?.length}
+                        icon={<HourglassEmptyIcon />}
+                        color="#f57c00"
+                    />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                    <DashboardCard
+                        title="Rejected Leaves"
+                        value={rejectedLeaves?.length}
+                        icon={<CloseTwoTone />}
+                        color={colors.red[500]}
+                    />
+                </Grid>
+            </Grid>
+        </>
+    )
 }
 
 
@@ -45,39 +87,3 @@ export default function ManagerDashboard() {
 
 
 
-
-
-// 'use client'
-// import AccessRestricted from '@/components/AccessRestricted';
-
-// /* eslint-disable @typescript-eslint/no-explicit-any */
-// import { Box, CircularProgress, Typography } from '@mui/material';
-// import { useSession } from 'next-auth/react';
-
-// import { useRouter } from 'next/navigation';
-
-// export default function DashboardPage() {
-//     const router = useRouter()
-//     const { status, data }: any = useSession({
-//         required: true,
-//         onUnauthenticated() {
-//             // You could redirect here if you prefer
-//             router.push('/unauthorized');
-//         },
-//     })
-
-//     if (status === 'loading') {
-//         return <CircularProgress />
-//     }
-//     if (data?.user?.role !== 'manager') {
-//         return (
-//             <AccessRestricted />
-//         )
-//     }
-//     return (
-//         <Box sx={{ p: 4 }}>
-//             <Typography variant='h3'>Manager Dashboard</Typography>
-//         </Box>
-//     );
-
-// }

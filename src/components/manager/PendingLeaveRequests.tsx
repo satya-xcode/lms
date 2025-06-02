@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-
-import { useManager } from '@/hooks/useManager';
 import { Cancel, CheckCircle } from '@mui/icons-material';
 import {
     Table,
@@ -22,6 +20,7 @@ import {
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { format, formatDistance, formatDuration, intervalToDuration } from 'date-fns';
+import { useLeavesManageByManager } from '@/hooks/manager/useLeavesManageByManager';
 
 type LoadingState = {
     requestId: string;
@@ -84,7 +83,7 @@ const getLeaveTypeDetails = (request: any) => {
 
 export default function PendingLeaveRequests({ requests }: { requests: any }) {
     const [loadingState, setLoadingState] = useState<LoadingState>(null);
-    const { approveLeaveRequest, rejectLeaveRequest } = useManager({});
+    const { approveLeaveRequest, rejectLeaveRequest } = useLeavesManageByManager({});
 
     async function handleAction(_id: string, actionType: 'approve' | 'reject', requestType: string) {
         setLoadingState({ requestId: _id, actionType });

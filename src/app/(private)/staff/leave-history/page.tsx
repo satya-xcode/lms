@@ -1,29 +1,28 @@
 
 'use client'
-
-import { useStaffLeaveRequests } from '@/hooks/useStaffLeaveRequests'
 import { Box, Stack, Tab, Tabs } from '@mui/material'
 import React from 'react'
 import LeaveRequestList from '@/components/staff/StaffLeaveRequestList'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import theme from '@/theme/theme'
+import { useStaffLeaves } from '@/hooks/staff/useStaffLeaves'
 
 function LeaveRequesthistory() {
 
     const { user } = useCurrentUser();
     const [tabValue, setTabValue] = React.useState(0);
     // Fetch pending and approved requests
-    const { data: pendingRequests } = useStaffLeaveRequests({
+    const { data: pendingRequests } = useStaffLeaves({
         staffId: user?.id,
         status: 'pending'
     });
 
-    const { data: approvedRequests } = useStaffLeaveRequests({
+    const { data: approvedRequests } = useStaffLeaves({
         staffId: user?.id,
         status: 'approved'
     });
 
-    const { data: rejectedRequests } = useStaffLeaveRequests({
+    const { data: rejectedRequests } = useStaffLeaves({
         staffId: user?.id,
         status: 'rejected'
     });

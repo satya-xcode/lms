@@ -1,24 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // app/dashboard/staff/page.tsx
 'use client';
-
 import React from 'react';
 import { Stack } from '@mui/material';
-
 import LeaveRequestForm from '@/components/staff/StaffLeaveRequestForm';
-
-import { useStaffLeaveRequests } from '@/hooks/useStaffLeaveRequests';
 import StaffLeaveDashboard from '@/components/staff/StaffLeaveDashboard';
-
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import theme from '@/theme/theme';
+import { useStaffLeaves } from '@/hooks/staff/useStaffLeaves';
 
 const StaffDashboard = () => {
     // const { data: session }: any = useSession();
     const router = useRouter();
-    const { createStaffLeaveRequest } = useStaffLeaveRequests({})
+    const { createStaffLeaveRequest } = useStaffLeaves({})
     const { user } = useCurrentUser();
 
     const userLimits = {
@@ -44,7 +40,6 @@ const StaffDashboard = () => {
             <LeaveRequestForm
                 onSubmit={async (values) => {
                     try {
-
                         const res = await createStaffLeaveRequest(values)
                         toast.success(res.message, { richColors: true });
                         router.refresh(); // Refresh the page to update the leave list

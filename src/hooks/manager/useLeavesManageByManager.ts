@@ -1,9 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
+import { useMemo } from 'react';
 import useSWR from 'swr';
+// import useSWR from 'swr';
 
-export const useManager = ({ managerId }: { managerId?: string }) => {
-    const key = managerId ? `api/leave/requests?managerId=${managerId}` : null;
+export const useLeavesManageByManager = (
+    { managerId, status }: {
+        managerId?: string;
+        status?: string;
+    }
+) => {
+    const shouldFetch = Boolean(managerId) && Boolean(status)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const queryParams = new URLSearchParams();
+
+    if (managerId) queryParams.append('managerId', managerId);
+    if (status) queryParams.append('status', status);
+
+    const key = useMemo(() => (
+        shouldFetch ? `/api/managers/leaves?${queryParams.toString()}` : null
+    ), [shouldFetch, queryParams]);
 
     const { data, error, isLoading, mutate } = useSWR(key);
 
@@ -12,7 +28,7 @@ export const useManager = ({ managerId }: { managerId?: string }) => {
             // Optional: optimistic update
             const optimisticData = data?.data?.filter((req: any) => req._id !== requestId);
             mutate(optimisticData, false); // optimistic update (disable revalidation)
-            const response = await axios.post(`/api/leave/approve?id=${requestId}&requestType=${requestType}`);
+            const response = await axios.post(`/api/managers/leaves/approve?id=${requestId}&requestType=${requestType}`);
             mutate(); // revalidate
             return response.data;
         } catch (err) {
@@ -25,7 +41,7 @@ export const useManager = ({ managerId }: { managerId?: string }) => {
         try {
             const optimisticData = data?.data?.filter((req: any) => req._id !== requestId);
             mutate(optimisticData, false);
-            const response = await axios.post(`/api/leave/reject?id=${requestId}`);
+            const response = await axios.post(`/api/managers/leaves/reject?id=${requestId}`);
             mutate(); // revalidate
             return response.data;
         } catch (err) {

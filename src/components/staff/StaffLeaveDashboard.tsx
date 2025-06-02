@@ -26,7 +26,8 @@ import {
 } from '@mui/icons-material';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import LeaveRequestList from './StaffLeaveRequestList';
-import { useStaffLeaveRequests } from '@/hooks/useStaffLeaveRequests';
+import { useStaffLeaves } from '@/hooks/staff/useStaffLeaves';
+
 
 interface LeaveDashboardProps {
     userLimits: {
@@ -101,7 +102,7 @@ const StaffLeaveDashboard: React.FC<LeaveDashboardProps> = ({ userLimits, totalL
     const getRemainingText = (current: number) => {
         return current === 1 ? `${current} remaining` : `${current} remaining`;
     };
-    const { data: pendingRequests } = useStaffLeaveRequests({
+    const { data: pendingRequests } = useStaffLeaves({
         staffId: user?.id,
         status: 'pending'
     });

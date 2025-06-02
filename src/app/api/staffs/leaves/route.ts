@@ -40,23 +40,6 @@ export async function GET(req: Request) {
             }
         }
 
-        const managerId = searchParams.get('managerId');
-        if (managerId) {
-            if (session?.user?.id == managerId && session?.user?.role == 'manager') {
-                const requests = await LeaveRequest.find({ manager: managerId, status: 'pending' })
-                    .populate('staff', 'name email department')
-                    .populate('manager', 'name email')
-                    .sort({ createdAt: -1 });
-
-                return NextResponse.json(
-                    { data: requests, message: 'Fetched manager pending requests' },
-                    { status: 200 }
-                );
-            } else {
-                return NextResponse.json({ error: 'Unauthorized access to manager data' }, { status: 403 });
-            }
-        }
-
         return NextResponse.json({ error: 'Invalid query parameters' }, { status: 400 });
 
     } catch (error: any) {

@@ -20,7 +20,6 @@ interface UserDetails {
     mobile: string;
     role: UserRole;
     department: string;
-    position: string;
     leaveBalance: number;
     additionalLeave: number
     monthlyLimits: MonthlyLimits;
