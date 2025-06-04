@@ -27,7 +27,7 @@ export default function ManagerDashboard() {
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <DashboardCard
                         title="Total Staffs"
-                        value={totalStaffs}
+                        value={totalStaffs || 0}
                         icon={<GroupIcon />}
                         color="#1976d2"
                     />
@@ -35,7 +35,7 @@ export default function ManagerDashboard() {
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <DashboardCard
                         title="Total Leaves"
-                        value={parseInt(pendingLeaves?.length) + parseInt(approvedLeaves?.length) + parseInt(rejectedLeaves?.length)}
+                        value={parseInt(pendingLeaves?.length) + parseInt(approvedLeaves?.length) + parseInt(rejectedLeaves?.length) || 0}
                         icon={<EventAvailableIcon />}
                         color="#9c27b0"
                     />
@@ -43,7 +43,7 @@ export default function ManagerDashboard() {
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <DashboardCard
                         title="Approved Leaves"
-                        value={approvedLeaves?.length}
+                        value={approvedLeaves?.length || 0}
                         icon={<CheckCircleIcon />}
                         color="#2e7d32"
                     />
@@ -51,7 +51,7 @@ export default function ManagerDashboard() {
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <DashboardCard
                         title="Pending Leaves"
-                        value={pendingLeaves?.length}
+                        value={pendingLeaves?.length || 0}
                         icon={<HourglassEmptyIcon />}
                         color="#f57c00"
                     />
@@ -59,7 +59,7 @@ export default function ManagerDashboard() {
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <DashboardCard
                         title="Rejected Leaves"
-                        value={rejectedLeaves?.length}
+                        value={rejectedLeaves?.length || 0}
                         icon={<CloseTwoTone />}
                         color={colors.red[500]}
                     />

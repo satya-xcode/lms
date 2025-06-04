@@ -82,7 +82,7 @@ export function DataTable<TData>({
     }
 
     return (
-        <Paper sx={{ mt: 2 }}>
+        <Paper sx={{}}>
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 {title && <Typography variant="h6">{title}</Typography>}
                 <Box display="flex" gap={2}>

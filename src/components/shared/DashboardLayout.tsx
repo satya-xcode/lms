@@ -22,12 +22,15 @@ import {
     AccountCircle,
     Assignment,
     Home,
+    HowToReg,
+    Group,
 } from '@mui/icons-material';
 import { ReactNode, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation'; // Replace with react-router-dom for React Router
 // import SignOutButton from './SignOutButton';
 import { signOut, useSession } from 'next-auth/react';
 import theme from '@/theme/theme';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 const drawerWidth = 240;
 interface DashboardLayoutProps {
     children: ReactNode;
@@ -50,8 +53,9 @@ const roleNavigation: any = {
     ],
     staff: [
         { label: 'Dashboard', href: '/staff', icon: <Home /> },
-        { label: 'Apply Leave', href: '/staff/apply-leave', icon: <Assignment /> },
+        { label: 'Apply Leave', href: '/staff/apply-leave', icon: <HowToReg /> },
         { label: 'Leaves History', href: '/staff/leave-history', icon: <Assignment /> },
+        { label: 'Employee Leaves', href: '/staff/employee-leaves', icon: <Group /> },
         { label: 'My Account', href: '/staff/my-account', icon: <AccountCircle /> }
     ]
 };
@@ -59,7 +63,7 @@ const roleNavigation: any = {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
     // const theme = useTheme();
-    const { data: session, status }: any = useSession();
+    const { isLoading, user }: any = useCurrentUser()
     const [mobileOpen, setMobileOpen] = useState(false);
     const router = useRouter()
     const pathname = usePathname();
@@ -68,7 +72,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         setMobileOpen(!mobileOpen);
     };
     // Get navigation items based on user role
-    const navItems = roleNavigation[session?.user?.role] || [];
+    const navItems = roleNavigation[user?.role] || [];
     const drawer = (
         <Box sx={{ textAlign: 'center' }}>
             <Typography variant="h3" sx={{ textTransform: 'uppercase', color: 'white', fontWeight: 'bold', my: theme.spacing(2) }}>
@@ -132,6 +136,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             {/* AppBar */}
             <AppBar
                 position="fixed"
+                elevation={0}
                 sx={{
                     width: { md: `calc(100% - ${drawerWidth}px)` },
                     ml: { md: `${drawerWidth}px` },
@@ -150,16 +155,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                         <MenuIcon />
                     </IconButton>
                     <Typography flexGrow={1} variant="h5" fontWeight={'bold'} textTransform={'capitalize'} noWrap>
-                        {session?.user?.role} Dashboard
+                        {user?.role} Dashboard
                     </Typography>
-
-
                     {
-                        status === 'loading' ? (
+                        isLoading ? (
                             <Box sx={{ px: 2 }}>
                                 <CircularProgress color="inherit" size={20} thickness={4} />
                             </Box>
-                        ) : session?.user && (
+                        ) : user && (
                             <>
                                 <Box sx={{
                                     display: 'flex',
@@ -181,14 +184,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                                             fontSize: '0.875rem'
                                         }}
                                     >
-                                        {session.user.name?.charAt(0) || session.user.email?.charAt(0)}
+                                        {user.name?.charAt(0) || user.email?.charAt(0)}
                                     </Avatar>
                                     <Typography variant="subtitle2" noWrap>
                                         <Box component="span" fontWeight="medium">
-                                            {session.user.name}
+                                            {user.name}
                                         </Box>
                                         <Box component="span" color="text.secondary" ml={1} fontSize="0.75rem">
-                                            ({session.user.role})
+                                            ({user.role})
                                         </Box>
                                     </Typography>
                                 </Box>
@@ -249,7 +252,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     flexGrow: 1,
                     p: theme.spacing(2),
                     width: { md: `calc(100% - ${drawerWidth}px)` },
-                    mt: { xs: 8, md: 9 },
+                    mt: { xs: 8, md: 8 },
                 }}
             >
                 {children}
