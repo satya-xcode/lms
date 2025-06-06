@@ -121,7 +121,7 @@ export default function PendingLeaveRequests({ requests }: { requests: any }) {
                 </TableHead>
                 <TableBody>
                     {requests.map((request: any) => {
-                        const { label, color, duration, details } = getLeaveTypeDetails(request);
+                        const { label, color, duration, details }: any = getLeaveTypeDetails(request);
                         const isApproving = loadingState?.requestId === request._id &&
                             loadingState?.actionType === 'approve';
                         const isRejecting = loadingState?.requestId === request._id &&
