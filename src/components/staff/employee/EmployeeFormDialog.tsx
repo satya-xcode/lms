@@ -170,7 +170,7 @@ const EmployeeFormDialog = ({ open, setOpenForm, createLeaveRequest }: any) => {
                                     textField: {
                                         fullWidth: true,
                                         error: formik.touched.startDate && Boolean(formik.errors.startDate),
-                                        helperText: formik?.touched?.startDate && formik?.errors?.startDate,
+                                        helperText: formik?.touched?.startDate && !!formik?.errors?.startDate,
                                     },
                                 }}
                             />
@@ -183,7 +183,7 @@ const EmployeeFormDialog = ({ open, setOpenForm, createLeaveRequest }: any) => {
                                     textField: {
                                         fullWidth: true,
                                         error: formik.touched.endDate && Boolean(formik.errors.endDate),
-                                        helperText: formik.touched.endDate && formik.errors.endDate,
+                                        helperText: formik.touched.endDate && !!formik.errors.endDate,
                                     },
                                 }}
                             />
