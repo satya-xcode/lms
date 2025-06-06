@@ -23,14 +23,14 @@ import { toast } from 'sonner';
 import { format, formatDistance } from 'date-fns';
 
 const StaffEmployeeManagement = () => {
-    const { user } = useCurrentUser()
+    const { user }: any = useCurrentUser()
     const {
         employees,
         isLoading,
         error,
         deleteEmployeeLeave,
         createLeaveRequest,
-    } = useStaffEmployeesLeave(String(user?.id));
+    } = useStaffEmployeesLeave(user?.id);
     const [openForm, setOpenForm] = useState(false);
 
     const handleAddEmployee = () => {
@@ -64,7 +64,7 @@ const StaffEmployeeManagement = () => {
                 <Typography>Loading employees...</Typography>
             ) : error ? (
                 <Typography color="error">{error}</Typography>
-            ) : employees.length === 0 ? (
+            ) : employees?.length === 0 ? (
                 <Paper sx={{ p: 3, textAlign: 'center' }}>
                     <Typography>No employees leave found</Typography>
                 </Paper>
@@ -84,18 +84,18 @@ const StaffEmployeeManagement = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {employees.map((employee: any) => (
-                                <TableRow key={employee._id}>
-                                    <TableCell>{employee.name}</TableCell>
-                                    <TableCell>{employee.empId}</TableCell>
-                                    <TableCell>{employee.punchId}</TableCell>
-                                    <TableCell>{employee.department}</TableCell>
-                                    <TableCell>{employee.type}</TableCell>
+                            {employees?.map((employee: any) => (
+                                <TableRow key={employee?._id}>
+                                    <TableCell>{employee?.name}</TableCell>
+                                    <TableCell>{employee?.empId}</TableCell>
+                                    <TableCell>{employee?.punchId}</TableCell>
+                                    <TableCell>{employee?.department}</TableCell>
+                                    <TableCell>{employee?.type}</TableCell>
                                     <TableCell>
-                                        {formatDateRange(employee.startDate, employee.endDate, employee.type)}
+                                        {formatDateRange(employee?.startDate, employee?.endDate, employee?.type)}
                                     </TableCell>
                                     <TableCell>
-                                        {formatDistance(new Date(employee.createdAt), new Date(), { addSuffix: true })}
+                                        {formatDistance(new Date(employee?.createdAt), new Date(), { addSuffix: true })}
                                     </TableCell>
                                     <TableCell>
                                         <IconButton
@@ -112,7 +112,7 @@ const StaffEmployeeManagement = () => {
                                                     },
                                                     action: {
                                                         label: 'Delete',
-                                                        onClick: () => deleteEmployeeLeave(employee._id, String(user?.id))
+                                                        onClick: () => deleteEmployeeLeave(employee?._id, String(user?.id))
                                                     },
                                                     richColors: true, closeButton: true, icon: <Delete />
                                                 });

@@ -3,7 +3,7 @@
 import useSWR from 'swr';
 import axios from 'axios';
 
-export const useStaffEmployeesLeave = (staffId: string) => {
+export const useStaffEmployeesLeave = (staffId?: string) => {
     const { data, error, mutate, isLoading } = useSWR(
         staffId ? `/api/staffs/employee/leaves?staffId=${staffId}` : null,
         url => axios.get(url).then(res => res.data)
@@ -40,7 +40,7 @@ export const useStaffEmployeesLeave = (staffId: string) => {
     };
 
     return {
-        employees: data?.data || [],
+        employees: data?.data,
         isLoading: isLoading,
         error,
         createLeaveRequest,
