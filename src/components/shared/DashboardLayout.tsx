@@ -28,7 +28,7 @@ import {
 import { ReactNode, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation'; // Replace with react-router-dom for React Router
 // import SignOutButton from './SignOutButton';
-import { signOut, useSession } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 import theme from '@/theme/theme';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 const drawerWidth = 240;
