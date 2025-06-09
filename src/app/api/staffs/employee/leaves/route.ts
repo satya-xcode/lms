@@ -48,11 +48,10 @@ export async function POST(request: Request) {
 
     try {
         const { name, fatherName, empId, punchId, department, leaveType, reason, startDate, endDate } = await request.json();
-
-        const leaveRequest = new EmployeeLeaves({
+        const res = await EmployeeLeaves.create({
             name: name,
             fatherName: fatherName,
-            empId: empId || '',
+            empId: empId,
             punchId: punchId,
             department,
             staff: staffId,
@@ -61,13 +60,12 @@ export async function POST(request: Request) {
             startDate: new Date(startDate),
             endDate: new Date(endDate),
             status: 'submitted'
-        });
+        })
 
-        await leaveRequest.save();
-        return NextResponse.json({ data: leaveRequest, message: 'Leave submitted successfully' }, { status: 201 });
+        return NextResponse.json({ data: res, message: 'Leave submitted successfully' }, { status: 201 });
     } catch (error: any) {
         return NextResponse.json(
-            { error: 'Failed to create leave request', details: error.message },
+            { error: error.message || 'Failed to create leave request' },
             { status: 500 }
         );
     }

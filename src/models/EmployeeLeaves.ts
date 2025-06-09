@@ -3,7 +3,7 @@ import { Schema, model, models } from 'mongoose';
 export interface IEmployeeLeaves {
     name: string;
     fatherName: string;
-    empId: string;
+    empId?: string;
     punchId: string;
     department: string;
     staff: Schema.Types.ObjectId;
@@ -17,7 +17,7 @@ export interface IEmployeeLeaves {
 const employeeLeavesSchema = new Schema<IEmployeeLeaves>({
     name: { type: String, required: true },
     fatherName: { type: String, required: true },
-    empId: { type: String },
+    empId: { type: String, default: null },
     punchId: { type: String, required: true, unique: true },
     department: { type: String, required: true },
     staff: { type: Schema.Types.ObjectId, ref: 'User', required: true },

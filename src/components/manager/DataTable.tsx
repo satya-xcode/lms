@@ -2,14 +2,14 @@
 // components/DataTable.tsx
 'use client'
 
-import React, { useState } from 'react'
+import React, { } from 'react'
 import {
     ColumnDef,
     getCoreRowModel,
     getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
-    SortingState,
+
     flexRender,
 } from '@tanstack/react-table'
 import {
@@ -24,12 +24,12 @@ import {
     TableHead,
     TablePagination,
     TableRow,
-    TextField,
     Toolbar,
     Typography,
 } from '@mui/material'
 import { SaveAlt, Edit, Delete } from '@mui/icons-material'
 import * as XLSX from 'xlsx'
+import Link from 'next/link'
 
 interface DataTableProps<TData> {
     data: TData[]
@@ -56,19 +56,15 @@ export function DataTable<TData>({
     onDelete,
     title,
 }: DataTableProps<TData>) {
-    const [globalFilter, setGlobalFilter] = useState('')
-    const [sorting, setSorting] = useState<SortingState>([])
+
+
 
     const table = useReactTable({
         data,
         columns,
         pageCount: Math.ceil(totalCount / pageSize),
         manualPagination: true,
-        manualSorting: true,
-        state: {
-            sorting,
-        },
-        onSortingChange: setSorting,
+
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -86,12 +82,8 @@ export function DataTable<TData>({
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 {title && <Typography variant="h6">{title}</Typography>}
                 <Box display="flex" gap={2}>
-                    <TextField
-                        size="small"
-                        label="Search"
-                        value={globalFilter}
-                        onChange={(e) => setGlobalFilter(e.target.value)}
-                    />
+                    <Button variant='contained' component={Link} href='staff-history/add-staff'>Add Staff</Button>
+
                     <Button
                         variant="outlined"
                         startIcon={<SaveAlt />}
@@ -127,44 +119,35 @@ export function DataTable<TData>({
                         ))}
                     </TableHead>
                     <TableBody>
-                        {data
-                            .filter((row: any) =>
-                                globalFilter
-                                    ? Object.values(row)
-                                        .join(' ')
-                                        .toLowerCase()
-                                        .includes(globalFilter.toLowerCase())
-                                    : true
-                            )
-                            .map((row, index) => (
-                                <TableRow key={index}>
-                                    {table
-                                        .getRowModel()
-                                        .rows[index]?.getVisibleCells()
-                                        .map(cell => (
-                                            <TableCell key={cell.id}>
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext()
-                                                )}
-                                            </TableCell>
-                                        ))}
-                                    {(onEdit || onDelete) && (
-                                        <TableCell>
-                                            {onEdit && (
-                                                <IconButton onClick={() => onEdit(row)}>
-                                                    <Edit />
-                                                </IconButton>
-                                            )}
-                                            {onDelete && (
-                                                <IconButton onClick={() => onDelete(row)}>
-                                                    <Delete />
-                                                </IconButton>
+                        {data.map((row, index) => (
+                            <TableRow key={index}>
+                                {table
+                                    .getRowModel()
+                                    .rows[index]?.getVisibleCells()
+                                    .map(cell => (
+                                        <TableCell key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
                                             )}
                                         </TableCell>
-                                    )}
-                                </TableRow>
-                            ))}
+                                    ))}
+                                {(onEdit || onDelete) && (
+                                    <TableCell>
+                                        {onEdit && (
+                                            <IconButton onClick={() => onEdit(row)}>
+                                                <Edit />
+                                            </IconButton>
+                                        )}
+                                        {onDelete && (
+                                            <IconButton onClick={() => onDelete(row)}>
+                                                <Delete />
+                                            </IconButton>
+                                        )}
+                                    </TableCell>
+                                )}
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>

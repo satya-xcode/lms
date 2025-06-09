@@ -3,7 +3,7 @@ import axios from 'axios'
 import useSWR from 'swr'
 
 interface Params {
-    managerId: string
+    managerId?: string
     page?: number
     pageSize?: number
 }
@@ -15,6 +15,16 @@ export const useStaffsByManagers = ({ managerId, page, pageSize }: Params) => {
             : null
     const { data, error, isLoading, mutate } = useSWR(key)
 
+    const addStaff = async (data: unknown) => {
+        try {
+            const response = await axios.post(`/api/managers/staffs`, data);
+            mutate(); // revalidate
+            return response.data;
+        } catch (err) {
+            mutate(); // fallback to original state
+            throw err;
+        }
+    };
 
     const deleteStaff = async (managerId: string, staffId: string) => {
         try {
@@ -35,6 +45,7 @@ export const useStaffsByManagers = ({ managerId, page, pageSize }: Params) => {
         page: data?.page || 0,
         isLoading,
         error,
+        addStaff,
         deleteStaff
     }
 }
