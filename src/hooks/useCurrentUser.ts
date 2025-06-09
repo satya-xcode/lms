@@ -48,6 +48,7 @@ export const useCurrentUser = () => {
         isLoading: isLoading || status === 'loading',
         error,
         isAuthenticated: status === 'authenticated',
+        isUnAuthenticated: status === 'unauthenticated',
         mutateUser: mutate
     };
 };

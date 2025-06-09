@@ -15,12 +15,12 @@ import {
     TableRow,
     Typography
 } from '@mui/material';
-import { Add, Delete, Edit } from '@mui/icons-material';
+import { Add, Delete } from '@mui/icons-material';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useStaffEmployeesLeave } from '@/hooks/staff/useStaffEmployeesLeave';
 import EmployeeFormDialog from './EmployeeFormDialog';
 import { toast } from 'sonner';
-import { format, formatDistance } from 'date-fns';
+import { differenceInDays, formatDistance } from 'date-fns';
 
 const StaffEmployeeManagement = () => {
     const { user }: any = useCurrentUser()
@@ -29,7 +29,6 @@ const StaffEmployeeManagement = () => {
         isLoading,
         error,
         deleteEmployeeLeave,
-        createLeaveRequest,
     } = useStaffEmployeesLeave(user?.id);
     const [openForm, setOpenForm] = useState(false);
 
@@ -37,14 +36,40 @@ const StaffEmployeeManagement = () => {
         setOpenForm(true);
     };
 
-    const formatDateRange = (start: Date, end: Date, type: string) => {
-        if (type === 'full-day') {
-            return format(new Date(start), 'MMM dd, yyyy');
+    // Function to calculate time difference based on leave type
+    // Function to calculate time difference based on leave type
+    const calculateDuration = (start: Date, end: Date, leaveType: string) => {
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        const diffMs = endDate.getTime() - startDate.getTime();
+
+        // Convert milliseconds to days, hours, minutes
+        const totalMinutes = Math.floor(diffMs / 60000);
+        const hours = Math.floor(totalMinutes / 60);
+        // const days = Math.floor(hours / 24);
+
+        switch (leaveType) {
+            case 'half-day':
+                // Always show 5 hours for half-day
+                return '5 hours';
+
+            case 'gate-pass':
+                // Show actual gate-pass duration in hours/minutes
+                const minutes = totalMinutes % 60;
+                if (hours > 0) {
+                    return `${hours} hour${hours > 1 ? 's' : ''} ${minutes} min`;
+                }
+                return `${minutes} min`;
+
+            case 'additional-leave':
+                // For additional-leave, show only days (adding 1 to include both start and end dates)
+                const totalDays = differenceInDays(endDate, startDate) + 1;
+                return `${totalDays} day${totalDays > 1 ? 's' : ''}`;
+
+            default:
+                // Default case (shouldn't happen)
+                return `${hours} hour${hours > 1 ? 's' : ''}`;
         }
-        //  if (type === 'additional-leave') {
-        //      return `${format(new Date(start), 'MMM dd, hh:mm a')} - ${format(new Date(end), 'MMM dd, hh:mm a')}`;
-        //  }
-        return `${format(new Date(start), 'MMM dd, hh:mm a')} - ${format(new Date(end), ' hh:mm a')}`;
     };
 
     return (
@@ -74,6 +99,7 @@ const StaffEmployeeManagement = () => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Name</TableCell>
+                                <TableCell>Father Name</TableCell>
                                 <TableCell>Employee ID</TableCell>
                                 <TableCell>Punch ID</TableCell>
                                 <TableCell>Department</TableCell>
@@ -87,22 +113,26 @@ const StaffEmployeeManagement = () => {
                             {employees?.map((employee: any) => (
                                 <TableRow key={employee?._id}>
                                     <TableCell>{employee?.name}</TableCell>
+                                    <TableCell>{employee?.fatherName}</TableCell>
                                     <TableCell>{employee?.empId}</TableCell>
                                     <TableCell>{employee?.punchId}</TableCell>
                                     <TableCell>{employee?.department}</TableCell>
-                                    <TableCell>{employee?.type}</TableCell>
                                     <TableCell>
-                                        {formatDateRange(employee?.startDate, employee?.endDate, employee?.type)}
+                                        {employee?.leaveType === 'half-day' && 'Half Day'}
+                                        {employee?.leaveType === 'gate-pass' && 'Gate Pass'}
+                                        {employee?.leaveType === 'additional-leave' && 'Additional Leave'}
+                                    </TableCell>
+                                    <TableCell>
+                                        {calculateDuration(
+                                            employee?.startDate,
+                                            employee?.endDate,
+                                            employee?.leaveType
+                                        )}
                                     </TableCell>
                                     <TableCell>
                                         {formatDistance(new Date(employee?.createdAt), new Date(), { addSuffix: true })}
                                     </TableCell>
                                     <TableCell>
-                                        <IconButton
-                                        // onClick={() => handleEditEmployee(employee)}
-                                        >
-                                            <Edit />
-                                        </IconButton>
                                         <IconButton
                                             onClick={() => {
                                                 toast.warning('Are sure to delete', {
@@ -114,20 +144,14 @@ const StaffEmployeeManagement = () => {
                                                         label: 'Delete',
                                                         onClick: () => deleteEmployeeLeave(employee?._id, String(user?.id))
                                                     },
-                                                    richColors: true, closeButton: true, icon: <Delete />
+                                                    richColors: true,
+                                                    closeButton: true,
+                                                    icon: <Delete />
                                                 });
                                             }}
                                         >
                                             <Delete color="error" />
                                         </IconButton>
-                                        {/* <Button
-                                            variant="outlined"
-                                            size="small"
-                                            onClick={() => handleRequestLeave(employee)}
-                                            sx={{ ml: 1 }}
-                                        >
-                                            Request Leave
-                                        </Button> */}
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -136,7 +160,7 @@ const StaffEmployeeManagement = () => {
                 </TableContainer>
             )}
 
-            <EmployeeFormDialog open={openForm} setOpenForm={setOpenForm} createLeaveRequest={createLeaveRequest} />
+            <EmployeeFormDialog open={openForm} setOpenForm={setOpenForm} />
         </Box>
     );
 };

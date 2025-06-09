@@ -1,13 +1,13 @@
 // models/EmployeeLeaves.ts
 import { Schema, model, models } from 'mongoose';
-export type LeaveRequestType = 'half-day' | 'full-day';
 export interface IEmployeeLeaves {
     name: string;
+    fatherName: string;
     empId: string;
     punchId: string;
     department: string;
     staff: Schema.Types.ObjectId;
-    type: LeaveRequestType;
+    leaveType: string;
     reason: string;
     startDate: Date;
     endDate: Date;
@@ -16,13 +16,13 @@ export interface IEmployeeLeaves {
 
 const employeeLeavesSchema = new Schema<IEmployeeLeaves>({
     name: { type: String, required: true },
-    empId: { type: String, required: true, unique: true },
+    fatherName: { type: String, required: true },
+    empId: { type: String },
     punchId: { type: String, required: true, unique: true },
     department: { type: String, required: true },
     staff: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    type: {
+    leaveType: {
         type: String,
-        enum: ['half-day', 'full-day'],
         required: true
     },
     reason: { type: String, required: true },

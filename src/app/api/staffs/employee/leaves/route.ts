@@ -47,15 +47,16 @@ export async function POST(request: Request) {
     }
 
     try {
-        const { name, empId, punchId, department, type, reason, startDate, endDate } = await request.json();
+        const { name, fatherName, empId, punchId, department, leaveType, reason, startDate, endDate } = await request.json();
 
         const leaveRequest = new EmployeeLeaves({
             name: name,
-            empId: empId,
+            fatherName: fatherName,
+            empId: empId || '',
             punchId: punchId,
             department,
             staff: staffId,
-            type,
+            leaveType,
             reason,
             startDate: new Date(startDate),
             endDate: new Date(endDate),
