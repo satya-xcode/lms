@@ -39,6 +39,8 @@ interface DataTableProps<TData> {
     pageSize: number
     onPageChange: (page: number) => void
     onPageSizeChange: (size: number) => void
+    addTitle: string,
+    addTitleRoute: string,
     onEdit?: (row: TData) => void
     onDelete?: (row: TData) => void
     title?: string
@@ -52,6 +54,8 @@ export function DataTable<TData>({
     pageSize,
     onPageChange,
     onPageSizeChange,
+    addTitle,
+    addTitleRoute,
     onEdit,
     onDelete,
     title,
@@ -82,7 +86,8 @@ export function DataTable<TData>({
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 {title && <Typography variant="h6">{title}</Typography>}
                 <Box display="flex" gap={2}>
-                    <Button variant='contained' component={Link} href='staff-history/add-staff'>Add Staff</Button>
+
+                    <Button variant='contained' component={Link} href={addTitleRoute}>{addTitle}</Button>
 
                     <Button
                         variant="outlined"

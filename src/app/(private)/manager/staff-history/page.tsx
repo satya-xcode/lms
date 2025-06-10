@@ -52,6 +52,8 @@ function StaffHistory() {
             pageSize={pageSize}
             onPageChange={setPage}
             onPageSizeChange={setPageSize}
+            addTitle='Add Staff'
+            addTitleRoute='staff-history/add-staff'
             onEdit={(row: any) => console.log('Edit', row)}
             onDelete={(row: any) => {
                 toast.warning('Are sure to delete', {

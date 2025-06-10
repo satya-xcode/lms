@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// components/StaffEmployeeManagement.tsx
+// components/EmplyeeWorksLeave.tsx
 'use client';
 import React, { useState } from 'react';
 import {
@@ -16,16 +16,16 @@ import {
     TableRow,
     Typography
 } from '@mui/material';
-import { Add, Delete, WorkspacePremium } from '@mui/icons-material';
+import { Add, ArrowBackIosNew, Delete } from '@mui/icons-material';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useStaffEmployeesLeave } from '@/hooks/staff/useStaffEmployeesLeave';
-import EmployeeFormDialog from './EmployeeFormDialog';
 import { toast } from 'sonner';
-import { differenceInDays, formatDistance } from 'date-fns';
+import { formatDistance } from 'date-fns';
 import theme from '@/theme/theme';
 import { useRouter } from 'next/navigation';
+import EmployeeWorksFormDialog from '@/components/staff/employee/company-works/EmployeeWorksFormDialog';
 
-const StaffEmployeeManagement = () => {
+const EmplyeeWorksLeave = () => {
     const router = useRouter()
     const { user }: any = useCurrentUser()
     const {
@@ -33,7 +33,7 @@ const StaffEmployeeManagement = () => {
         isLoading,
         error,
         deleteEmployeeLeave,
-    } = useStaffEmployeesLeave(user?.id);
+    } = useStaffEmployeesLeave(user?.id, 'gate-pass(Work)');
     const [openForm, setOpenForm] = useState(false);
 
     const handleAddEmployee = () => {
@@ -42,58 +42,31 @@ const StaffEmployeeManagement = () => {
 
     // Function to calculate time difference based on leave type
     // Function to calculate time difference based on leave type
-    const calculateDuration = (start: Date, end: Date, leaveType: string) => {
-        const startDate = new Date(start);
-        const endDate = new Date(end);
-        const diffMs = endDate.getTime() - startDate.getTime();
+    // const calculateDuration = (start: Date, end: Date) => {
+    //     // const startDate = new Date(start);
+    //     // const endDate = new Date(end);
+    //     // const diffMs = endDate.getTime() - startDate.getTime();
 
-        // Convert milliseconds to days, hours, minutes
-        const totalMinutes = Math.floor(diffMs / 60000);
-        const hours = Math.floor(totalMinutes / 60);
-        // const days = Math.floor(hours / 24);
+    //     // Convert milliseconds to days, hours, minutes
+    //     // const totalMinutes = Math.floor(diffMs / 60000);
+    //     // const hours = Math.floor(totalMinutes / 60);
+    //     // const days = Math.floor(hours / 24);
 
-        switch (leaveType) {
-            case 'half-day':
-                // Always show 5 hours for half-day
-                return '5 hours';
-
-            case 'gate-pass':
-                // Show actual gate-pass duration in hours/minutes
-                const minutes = totalMinutes % 60;
-                if (hours > 0) {
-                    return `${hours} hour${hours > 1 ? 's' : ''} ${minutes} min`;
-                }
-                return `${minutes} min`;
-
-            case 'additional-leave':
-                // For additional-leave, show only days (adding 1 to include both start and end dates)
-                const totalDays = differenceInDays(endDate, startDate) + 1;
-                return `${totalDays} day${totalDays > 1 ? 's' : ''}`;
-
-            default:
-                // Default case (shouldn't happen)
-                return `${hours} hour${hours > 1 ? 's' : ''}`;
-        }
-    };
+    // };
 
     return (
         <Stack spacing={theme.spacing(2)}>
-            <Box display="flex" gap={theme.spacing(2)} flexDirection={{ xs: 'column', md: 'row' }} alignItems={'flex-start'}>
-                <Typography variant="h4" fontWeight={'bold'}>Employees Leave</Typography>
+            <Box display="flex" gap={theme.spacing(2)} flexDirection={{ xs: 'column', md: 'row' }} alignItems={'center'}>
+                <IconButton onClick={() => router.back()}>
+                    <ArrowBackIosNew />
+                </IconButton>
+                <Typography variant="h4" fontWeight={'bold'}>Works Leave</Typography>
                 <Button
                     variant="contained"
                     startIcon={<Add />}
                     onClick={handleAddEmployee}
                 >
                     Leave Request
-                </Button>
-                <Button
-                    variant="contained"
-                    color='info'
-                    startIcon={<WorkspacePremium />}
-                    onClick={() => router.push('employee-leaves/company-work-leaves')}
-                >
-                    Work Leave Request
                 </Button>
             </Box>
 
@@ -103,7 +76,7 @@ const StaffEmployeeManagement = () => {
                 <Typography color="error">{error}</Typography>
             ) : employees?.length === 0 ? (
                 <Paper sx={{ p: 3, textAlign: 'center' }}>
-                    <Typography>No employees leave found</Typography>
+                    <Typography>No employees works leave found</Typography>
                 </Paper>
             ) : (
                 <TableContainer component={Paper} variant='outlined'>
@@ -130,16 +103,16 @@ const StaffEmployeeManagement = () => {
                                     <TableCell>{employee?.punchId}</TableCell>
                                     <TableCell>{employee?.department}</TableCell>
                                     <TableCell>
-                                        {employee?.leaveType === 'half-day' && 'Half Day'}
-                                        {employee?.leaveType === 'gate-pass' && 'Gate Pass'}
-                                        {employee?.leaveType === 'additional-leave' && 'Additional Leave'}
+
+                                        {employee?.leaveType}
+
                                     </TableCell>
                                     <TableCell>
-                                        {calculateDuration(
+                                        Duration
+                                        {/* {calculateDuration(
                                             employee?.startDate,
-                                            employee?.endDate,
-                                            employee?.leaveType
-                                        )}
+                                            employee?.endDate
+                                        )} */}
                                     </TableCell>
                                     <TableCell>
                                         {formatDistance(new Date(employee?.createdAt), new Date(), { addSuffix: true })}
@@ -172,9 +145,9 @@ const StaffEmployeeManagement = () => {
                 </TableContainer>
             )}
 
-            <EmployeeFormDialog open={openForm} setOpenForm={setOpenForm} />
+            <EmployeeWorksFormDialog open={openForm} setOpenForm={setOpenForm} />
         </Stack>
     );
 };
 
-export default StaffEmployeeManagement;
+export default EmplyeeWorksLeave;

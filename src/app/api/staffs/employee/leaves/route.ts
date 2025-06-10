@@ -8,10 +8,12 @@ import EmployeeLeaves from '@/models/EmployeeLeaves';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
-    const staffId = searchParams.get('staffId');
+    const staffId = searchParams.get('staffId')?.toString();
+    const leaveType = searchParams.get('leaveType')?.toString();
+    console.log('Query parameters:', { staffId, leaveType });
 
     if (!staffId) {
-        return new Response('Invalid staffId', { status: 400 })
+        return new Response('Invalid staffId', { status: 400 });
     }
 
     await connectToDB();
@@ -22,18 +24,40 @@ export async function GET(request: Request) {
     }
 
     try {
-        const leaveRequests = await EmployeeLeaves.find({
-            staff: staffId
-        }).populate('staff', 'name email mobile');
+        // Check if leaveType exists and is not empty
+        if (!leaveType || leaveType === '' && leaveType == undefined) {
+            console.log('Filtered leaveType query:', staffId, leaveType);
+            const leaveRequests = await EmployeeLeaves.find({
+                staff: staffId
+            }).populate('staff', 'name email mobile');
 
-        return NextResponse.json({ message: 'Employee leaves fetched successfully', data: leaveRequests }, { status: 200 });
+            return NextResponse.json({
+                message: 'Employee leaves fetched successfully',
+                data: leaveRequests
+            }, { status: 200 });
+        }
+        // Else case (leaveType is undefined, null, or empty string)
+        else {
+
+            const leaveRequests = await EmployeeLeaves.find({
+                staff: staffId,
+                leaveType: leaveType
+            }).populate('staff', 'name email mobile');
+
+            return NextResponse.json({
+                message: 'Employee work leaves fetched successfully',
+                data: leaveRequests
+            }, { status: 200 });
+        }
     } catch (error: any) {
+        console.error('Error fetching leave requests:', error);
         return NextResponse.json(
             { error: 'Failed to fetch leave requests', details: error.message },
             { status: 500 }
         );
     }
 }
+
 
 export async function POST(request: Request) {
 

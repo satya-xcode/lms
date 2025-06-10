@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// components/admin/StaffManagement.tsx
+// components/admin/membersManagement.tsx
 'use client';
 import React, { useState } from 'react';
 import {
@@ -9,6 +9,7 @@ import {
     Card,
     CardContent,
     Chip,
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -27,7 +28,7 @@ import {
     Typography
 } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
@@ -35,15 +36,21 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { toast } from 'sonner';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { useAllManagers } from '@/hooks/manager/useAllManagers';
+import { useMembersByAdmin } from '@/hooks/admin/useMembersByAdmin';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import LoadingProgress from '../LoadingProgress';
 // import { useRouter } from 'next/navigation';
 
-const StaffManagement = () => {
-    const { data: session }: any = useSession();
-    // const router = useRouter();
-    const [staffMembers, setStaffMembers] = useState<any[]>([]);
+const MembersManagement = () => {
+    const { user, isLoading: isAuthLoading } = useCurrentUser();
+    const { members, addMember, deleteMember, isLoading } = useMembersByAdmin()
+
+    const { managers } = useAllManagers()
+
     const [openDialog, setOpenDialog] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [managers, setManagers] = useState<any[]>([]);
+    // const [isLoading, setIsLoading] = useState(true);
+    // const [managers, setManagers] = useState<any[]>([]);
 
     // Form validation schema
     const validationSchema = Yup.object().shape({
@@ -71,46 +78,11 @@ const StaffManagement = () => {
         password: '',
     };
 
-    // Fetch staff data
-    React.useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [staffRes, managersRes] = await Promise.all([
-                    axios.get('/api/admin/staff'),
-                    axios.get('/api/admin/staff?role=manager'),
-                ]);
-                setStaffMembers(staffRes.data.data);
-                setManagers(managersRes.data.data);
-            } catch (error: any) {
-                toast.error('Failed to fetch staff data');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        if (session?.user?.role === 'admin') {
-            fetchData();
-        }
-    }, [session]);
-
-    // Handle form submission
+    // // Handle form submission
     const handleSubmit = async (values: any, { resetForm }: any) => {
         try {
-            const method = values._id ? 'put' : 'post';
-            const url = values._id ? `/api/admin/staff?id=${values._id}` : '/api/admin/staff';
-
-            const { data } = await axios[method](url, values);
-
-            if (method === 'post') {
-                setStaffMembers([...staffMembers, data.data]);
-                toast.success('Staff member created successfully');
-            } else {
-                setStaffMembers(staffMembers.map(member =>
-                    member._id === data.data._id ? data.data : member
-                ));
-                toast.success('Staff member updated successfully');
-            }
-
+            await addMember(values)
+            toast.success('Staff member created successfully');
             setOpenDialog(false);
             resetForm();
         } catch (error) {
@@ -118,39 +90,44 @@ const StaffManagement = () => {
         }
     };
 
-    // Handle delete
-    const handleDelete = async (id: string) => {
-        try {
-            await axios.delete(`/api/admin/staff?id=${id}`);
-            setStaffMembers(staffMembers.filter(member => member._id !== id));
-            toast.success('Staff member deleted successfully');
-        } catch (error) {
-            toast.error('Failed to delete staff member');
-        }
-    };
 
-    if (!session || session.user.role !== 'admin') {
+    if (isAuthLoading) {
         return (
             <Box sx={{ p: 3 }}>
-                <Typography variant="h6">Unauthorized Access</Typography>
-                <Typography>You don&apos;t have permission to view this page.</Typography>
+                <LoadingProgress />
             </Box>
         );
     }
 
+    function handleDelete(_id: any): void {
+        toast.warning('Are sure to delete', {
+            cancel: {
+                label: 'Cancel',
+                onClick: () => console.log('Cancel!'),
+            },
+            action: {
+                label: 'Delete',
+                onClick: () => deleteMember(String(user?.id), _id)
+            },
+            richColors: true, closeButton: true, icon: <Delete />
+        });
+
+
+    }
+
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <Box sx={{ p: 3 }}>
+            <Box sx={{}}>
                 <Card>
                     <CardContent>
                         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                            <Typography variant="h5">Staff Management</Typography>
+                            <Typography variant="h5">Member Management</Typography>
                             <Button
                                 variant="contained"
                                 startIcon={<Add />}
                                 onClick={() => setOpenDialog(true)}
                             >
-                                Add New Staff
+                                Add New Member
                             </Button>
                         </Box>
 
@@ -161,9 +138,9 @@ const StaffManagement = () => {
                                         <TableCell>Name</TableCell>
                                         <TableCell>Email</TableCell>
                                         <TableCell>Department</TableCell>
-                                        <TableCell>Position</TableCell>
                                         <TableCell>Role</TableCell>
                                         <TableCell>Status</TableCell>
+                                        <TableCell>Password</TableCell>
                                         <TableCell>Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -174,33 +151,34 @@ const StaffManagement = () => {
                                                 Loading...
                                             </TableCell>
                                         </TableRow>
-                                    ) : staffMembers.length === 0 ? (
+                                    ) : members?.length === 0 ? (
                                         <TableRow>
                                             <TableCell colSpan={7} align="center">
-                                                No staff members found
+                                                No  members found
                                             </TableCell>
                                         </TableRow>
                                     ) : (
-                                        staffMembers.map((staff) => (
-                                            <TableRow key={staff._id}>
-                                                <TableCell>{staff.name}</TableCell>
-                                                <TableCell>{staff.email}</TableCell>
-                                                <TableCell>{staff.department}</TableCell>
-                                                <TableCell>{staff.position}</TableCell>
+                                        members?.map((staff: any) => (
+                                            <TableRow key={staff?._id}>
+                                                <TableCell>{staff?.name}</TableCell>
+                                                <TableCell>{staff?.email}</TableCell>
+                                                <TableCell>{staff?.department}</TableCell>
+
                                                 <TableCell>
                                                     <Chip
-                                                        label={staff.role}
-                                                        color={staff.role === 'manager' ? 'primary' : 'default'}
+                                                        label={staff?.role}
+                                                        color={staff?.role === 'manager' ? 'primary' : 'default'}
                                                         size="small"
                                                     />
                                                 </TableCell>
                                                 <TableCell>
                                                     <Chip
-                                                        label={staff.isActive ? 'Active' : 'Inactive'}
-                                                        color={staff.isActive ? 'success' : 'error'}
+                                                        label={staff?.isActive ? 'Active' : 'Inactive'}
+                                                        color={staff?.isActive ? 'success' : 'error'}
                                                         size="small"
                                                     />
                                                 </TableCell>
+                                                <TableCell>{staff?.password}</TableCell>
                                                 <TableCell>
                                                     <IconButton
                                                         onClick={() => {
@@ -210,7 +188,7 @@ const StaffManagement = () => {
                                                     >
                                                         <Edit fontSize="small" />
                                                     </IconButton>
-                                                    <IconButton onClick={() => handleDelete(staff._id)}>
+                                                    <IconButton onClick={() => handleDelete(staff?._id)}>
                                                         <Delete fontSize="small" color="error" />
                                                     </IconButton>
                                                 </TableCell>
@@ -225,7 +203,7 @@ const StaffManagement = () => {
 
                 {/* Add/Edit Staff Dialog */}
                 <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
-                    <DialogTitle>Add New Staff Member</DialogTitle>
+                    <DialogTitle>Add New Member</DialogTitle>
                     <Formik
                         initialValues={initialValues}
                         validationSchema={validationSchema}
@@ -299,7 +277,7 @@ const StaffManagement = () => {
                                                     fullWidth
                                                 >
                                                     <MenuItem value="">None</MenuItem>
-                                                    {managers.map((manager) => (
+                                                    {managers?.map((manager) => (
                                                         <MenuItem key={manager._id} value={manager._id}>
                                                             {manager.name}
                                                         </MenuItem>
@@ -316,7 +294,7 @@ const StaffManagement = () => {
                                                     textField: {
                                                         fullWidth: true,
                                                         error: touched.joinDate && !!errors.joinDate,
-                                                        helperText: String(touched.joinDate) && String(errors.joinDate),
+                                                        helperText: touched.joinDate && String(errors.joinDate),
                                                     },
                                                 }}
                                             />
@@ -351,4 +329,4 @@ const StaffManagement = () => {
     );
 };
 
-export default StaffManagement;
+export default MembersManagement;

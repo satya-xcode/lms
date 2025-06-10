@@ -31,42 +31,50 @@ import { usePathname, useRouter } from 'next/navigation'; // Replace with react-
 import { signOut } from 'next-auth/react';
 import theme from '@/theme/theme';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { useLeavesManageByManager } from '@/hooks/manager/useLeavesManageByManager';
 const drawerWidth = 240;
 interface DashboardLayoutProps {
     children: ReactNode;
 }
 
 
-// Role-based navigation configuration
-const roleNavigation: any = {
-    admin: [
-        { label: 'Dashboard', href: '/admin', icon: <Dashboard /> },
-        { label: 'Managers', href: '/admin/managers', icon: <People /> },
-        { label: 'Staffs', href: '/admin/staffs', icon: <People /> },
-        { label: 'My Account', href: '/admin/account', icon: <AccountCircle /> }
-    ],
-    manager: [
-        { label: 'Dashboard', href: '/manager', icon: <Dashboard /> },
-        { label: 'Staff History', href: '/manager/staff-history', icon: <People /> },
-        { label: 'Leave History', href: '/manager/leave-history', icon: <Assignment /> },
-        { label: 'My Account', href: '/manager/my-account', icon: <AccountCircle /> }
-    ],
-    staff: [
-        { label: 'Dashboard', href: '/staff', icon: <Home /> },
-        { label: 'Apply Leave', href: '/staff/apply-leave', icon: <HowToReg /> },
-        { label: 'Leaves History', href: '/staff/leave-history', icon: <Assignment /> },
-        { label: 'Employee Leaves', href: '/staff/employee-leaves', icon: <Group /> },
-        { label: 'My Account', href: '/staff/my-account', icon: <AccountCircle /> }
-    ]
-};
 
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
     // const theme = useTheme();
     const { isLoading, user }: any = useCurrentUser()
+    const { data: pendingRequests } = useLeavesManageByManager({ managerId: user?.id, status: 'pending' })
     const [mobileOpen, setMobileOpen] = useState(false);
     const router = useRouter()
     const pathname = usePathname();
+
+
+    // Role-based navigation configuration
+    const roleNavigation: any = {
+        admin: [
+            { label: 'Dashboard', href: '/admin', icon: <Dashboard /> },
+            { label: 'Members', href: '/admin/members', icon: <People /> },
+            // { label: 'Managers', href: '/admin/managers', icon: <People /> },
+            // { label: 'Staffs', href: '/admin/staffs', icon: <People /> },
+            { label: 'My Account', href: '/admin/account', icon: <AccountCircle /> }
+        ],
+        manager: [
+            { label: 'Dashboard', href: '/manager', icon: <Dashboard /> },
+            { label: 'Staff History', href: '/manager/staff-history', icon: <People /> },
+            { label: 'Leave History', href: '/manager/leave-history', icon: <Assignment />, pending: pendingRequests?.length || 'No Pendings' },
+            { label: 'My Account', href: '/manager/my-account', icon: <AccountCircle /> }
+        ],
+        staff: [
+            { label: 'Dashboard', href: '/staff', icon: <Home /> },
+            { label: 'Apply Leave', href: '/staff/apply-leave', icon: <HowToReg /> },
+            { label: 'Leaves History', href: '/staff/leave-history', icon: <Assignment /> },
+            { label: 'Employee Leaves', href: '/staff/employee-leaves', icon: <Group /> },
+            { label: 'My Account', href: '/staff/my-account', icon: <AccountCircle /> }
+        ]
+    };
+
+
+
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -101,7 +109,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                             }}
                         >
                             <ListItemIcon>{item.icon}</ListItemIcon>
-                            <ListItemText primary={item.label} />
+                            <ListItemText primary={item.label} secondary={<Typography sx={{ color: 'orange' }} fontWeight={'bold'} variant='subtitle1'>{item?.pending}</Typography>} />
                         </ListItemButton>
                     );
                 })}
