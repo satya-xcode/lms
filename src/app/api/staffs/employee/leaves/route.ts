@@ -25,20 +25,8 @@ export async function GET(request: Request) {
 
     try {
         // Check if leaveType exists and is not empty
-        if (!leaveType || leaveType === '' && leaveType == undefined) {
+        if (leaveType) {
             console.log('Filtered leaveType query:', staffId, leaveType);
-            const leaveRequests = await EmployeeLeaves.find({
-                staff: staffId
-            }).populate('staff', 'name email mobile');
-
-            return NextResponse.json({
-                message: 'Employee leaves fetched successfully',
-                data: leaveRequests
-            }, { status: 200 });
-        }
-        // Else case (leaveType is undefined, null, or empty string)
-        else {
-
             const leaveRequests = await EmployeeLeaves.find({
                 staff: staffId,
                 leaveType: leaveType
@@ -46,6 +34,18 @@ export async function GET(request: Request) {
 
             return NextResponse.json({
                 message: 'Employee work leaves fetched successfully',
+                data: leaveRequests
+            }, { status: 200 });
+        }
+        // Else case (leaveType is undefined, null, or empty string)
+        else {
+            console.log('All leaveTypes query:', staffId);
+            const leaveRequests = await EmployeeLeaves.find({
+                staff: staffId
+            }).populate('staff', 'name email mobile');
+
+            return NextResponse.json({
+                message: 'Employee leaves fetched successfully',
                 data: leaveRequests
             }, { status: 200 });
         }

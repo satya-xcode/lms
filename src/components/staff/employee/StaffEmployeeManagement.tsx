@@ -130,9 +130,9 @@ const StaffEmployeeManagement = () => {
                                     <TableCell>{employee?.punchId}</TableCell>
                                     <TableCell>{employee?.department}</TableCell>
                                     <TableCell>
-                                        {employee?.leaveType === 'half-day' && 'Half Day'}
-                                        {employee?.leaveType === 'gate-pass' && 'Gate Pass'}
-                                        {employee?.leaveType === 'additional-leave' && 'Additional Leave'}
+                                        {employee?.leaveType}
+                                        {/* {employee?.leaveType === 'gate-pass' && 'Gate Pass'}
+                                        {employee?.leaveType === 'additional-leave' && 'Additional Leave'} */}
                                     </TableCell>
                                     <TableCell>
                                         {calculateDuration(

@@ -2,12 +2,20 @@
 // hooks/useStaffEmployees.ts
 import useSWR from 'swr';
 import axios from 'axios';
-
+import qs from 'query-string';
 export const useStaffEmployeesLeave = (staffId?: string, leaveType?: string) => {
-    // console.log('leaveType', leaveType)
+    // Construct query parameters properly
+    const queryParams = qs.stringify({
+        staffId,
+        leaveType: leaveType || undefined // Only include leaveType if it has a value
+    }, { skipNull: true, skipEmptyString: true });
+
+    const apiUrl = staffId ? `/api/staffs/employee/leaves?${queryParams}` : null;
+
     const { data, error, mutate, isLoading } = useSWR(
-        staffId ? `/api/staffs/employee/leaves?staffId=${staffId}&leaveType=${leaveType}` : null,
-        url => axios.get(url).then(res => res.data)
+        apiUrl,
+        url => axios.get(url).then(res => res.data),
+        { revalidateOnFocus: false }
     );
 
     const createLeaveRequest = async (leaveData: any) => {
