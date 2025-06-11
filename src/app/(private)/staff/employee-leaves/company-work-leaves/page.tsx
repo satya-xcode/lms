@@ -41,18 +41,21 @@ const EmplyeeWorksLeave = () => {
     };
 
     // Function to calculate time difference based on leave type
-    // Function to calculate time difference based on leave type
-    // const calculateDuration = (start: Date, end: Date) => {
-    //     // const startDate = new Date(start);
-    //     // const endDate = new Date(end);
-    //     // const diffMs = endDate.getTime() - startDate.getTime();
-
-    //     // Convert milliseconds to days, hours, minutes
-    //     // const totalMinutes = Math.floor(diffMs / 60000);
-    //     // const hours = Math.floor(totalMinutes / 60);
-    //     // const days = Math.floor(hours / 24);
-
-    // };
+    const calculateDuration = (start: Date, end: Date) => {
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        const diffMs = endDate.getTime() - startDate.getTime();
+        // Convert milliseconds to days, hours, minutes, and seconds
+        const totalSeconds = Math.floor(diffMs / 1000);
+        // const days = Math.floor(totalSeconds / (60 * 60 * 24));
+        const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
+        // const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+        // const seconds = totalSeconds % 60;
+        // Format the duration as a string
+        // const duration = `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+        const duration = `${hours} hours`
+        return duration;
+    };
 
     return (
         <Stack spacing={theme.spacing(2)}>
@@ -108,11 +111,10 @@ const EmplyeeWorksLeave = () => {
 
                                     </TableCell>
                                     <TableCell>
-                                        Duration
-                                        {/* {calculateDuration(
+                                        {calculateDuration(
                                             employee?.startDate,
                                             employee?.endDate
-                                        )} */}
+                                        )}
                                     </TableCell>
                                     <TableCell>
                                         {formatDistance(new Date(employee?.createdAt), new Date(), { addSuffix: true })}

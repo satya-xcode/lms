@@ -9,8 +9,9 @@ interface Params {
 }
 
 export const useStaffsByManagers = ({ managerId, page, pageSize }: Params) => {
+
     const key =
-        managerId
+        Boolean(managerId)
             ? `/api/managers/staffs?managerId=${managerId}&page=${page}&limit=${pageSize}`
             : null
     const { data, error, isLoading, mutate } = useSWR(key)

@@ -16,7 +16,8 @@ export const useLeavesManageByManager = (
 
     if (managerId) queryParams.append('managerId', managerId);
     if (status) queryParams.append('status', status);
-
+    // console.log('shouldFetch', shouldFetch)
+    // console.log('params', { managerId, status })
     const key = useMemo(() => (
         shouldFetch ? `/api/managers/leaves?${queryParams.toString()}` : null
     ), [shouldFetch, queryParams]);

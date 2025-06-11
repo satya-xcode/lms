@@ -15,7 +15,7 @@ function StaffHistory() {
     const [pageSize, setPageSize] = useState(10)
 
     const { data = [], total, deleteStaff } = useStaffsByManagers({
-        managerId: String(user?.id),
+        managerId: user?.role === 'manager' ? String(user?.id) : undefined,
         page,
         pageSize,
     })

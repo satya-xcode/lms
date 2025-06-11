@@ -24,6 +24,7 @@ import {
     Home,
     HowToReg,
     Group,
+    Report,
 } from '@mui/icons-material';
 import { ReactNode, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation'; // Replace with react-router-dom for React Router
@@ -37,13 +38,10 @@ interface DashboardLayoutProps {
     children: ReactNode;
 }
 
-
-
-
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
     // const theme = useTheme();
     const { isLoading, user }: any = useCurrentUser()
-    const { data: pendingRequests } = useLeavesManageByManager({ managerId: user?.id, status: 'pending' })
+    const { data: pendingRequests } = useLeavesManageByManager({ managerId: user?.role === 'manager' && user?.id, status: 'pending' })
     const [mobileOpen, setMobileOpen] = useState(false);
     const router = useRouter()
     const pathname = usePathname();
@@ -54,6 +52,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         admin: [
             { label: 'Dashboard', href: '/admin', icon: <Dashboard /> },
             { label: 'Members', href: '/admin/members', icon: <People /> },
+            { label: 'Report', href: '/admin/report', icon: <Report /> },
             // { label: 'Managers', href: '/admin/managers', icon: <People /> },
             // { label: 'Staffs', href: '/admin/staffs', icon: <People /> },
             { label: 'My Account', href: '/admin/account', icon: <AccountCircle /> }

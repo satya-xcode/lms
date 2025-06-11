@@ -40,6 +40,7 @@ import { useAllManagers } from '@/hooks/manager/useAllManagers';
 import { useMembersByAdmin } from '@/hooks/admin/useMembersByAdmin';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import LoadingProgress from '../LoadingProgress';
+import theme from '@/theme/theme';
 // import { useRouter } from 'next/navigation';
 
 const MembersManagement = () => {
@@ -55,11 +56,13 @@ const MembersManagement = () => {
     // Form validation schema
     const validationSchema = Yup.object().shape({
         name: Yup.string().required('Name is required'),
+        fatherName: Yup.string().required('Father Name is required'),
+        empId: Yup.string(),
+        punchId: Yup.string().required('Punch ID is required'),
         email: Yup.string().email('Invalid email').required('Email is required'),
         mobile: Yup.string().required('Mobile number is required'),
         role: Yup.string().oneOf(['staff', 'manager']).required('Role is required'),
         department: Yup.string().required('Department is required'),
-
         joinDate: Yup.date().required('Join date is required'),
         password: Yup.string()
             .min(6, 'Password must be at least 6 characters')
@@ -69,6 +72,9 @@ const MembersManagement = () => {
     const initialValues = {
         _id: '',
         name: '',
+        fatherName: '',
+        empId: '',
+        punchId: '',
         email: '',
         mobile: '',
         role: 'staff',
@@ -222,6 +228,44 @@ const MembersManagement = () => {
                                                 error={touched.name && !!errors.name}
                                                 helperText={touched.name && errors.name}
                                             />
+                                        </Grid>
+
+                                        <Field
+                                            as={TextField}
+                                            label="Father's Name"
+                                            name="fatherName"
+                                            fullWidth
+                                            error={touched.fatherName && !!errors.fatherName}
+                                            helperText={touched.fatherName && errors.fatherName}
+                                        />
+
+
+
+                                        <Grid container spacing={theme.spacing(4)}>
+                                            <Grid size={{ xs: 12, md: 6 }}>
+
+                                                <Field
+                                                    as={TextField}
+                                                    label="Employee ID"
+                                                    name="empId"
+                                                    fullWidth
+                                                    error={touched.empId && !!errors.empId}
+                                                    helperText={touched.empId && errors.empId}
+                                                />
+
+
+                                            </Grid>
+                                            <Grid size={{ xs: 12, md: 6 }}>
+
+                                                <Field
+                                                    as={TextField}
+                                                    label="Punch ID"
+                                                    name="punchId"
+                                                    fullWidth
+                                                    error={touched.punchId && !!errors.punchId}
+                                                    helperText={touched.punchId && errors.punchId}
+                                                />
+                                            </Grid>
                                         </Grid>
                                         <Grid size={{ xs: 12, sm: 6 }}>
                                             <Field

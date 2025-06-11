@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { DatePicker } from '@mui/x-date-pickers';
+import { DateTimePicker } from '@mui/x-date-pickers';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { toast } from 'sonner';
@@ -181,7 +181,7 @@ const EmployeeWorksFormDialog = ({ open, setOpenForm }: any) => {
                         />
 
                         <Box display="flex" gap={2} mt={2}>
-                            <DatePicker
+                            <DateTimePicker
                                 label="Start Date"
                                 value={formik.values.startDate}
                                 onChange={(date) => formik.setFieldValue('startDate', date)}
@@ -193,7 +193,7 @@ const EmployeeWorksFormDialog = ({ open, setOpenForm }: any) => {
                                     },
                                 }}
                             />
-                            <DatePicker
+                            <DateTimePicker
                                 label="End Date"
                                 value={formik.values.endDate}
                                 onChange={(date) => formik.setFieldValue('endDate', date)}

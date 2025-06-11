@@ -3,6 +3,9 @@ import { Schema, model, models } from 'mongoose';
 
 export interface IUser {
     name: string;
+    fatherName: string;
+    empId?: string;
+    punchId: string;
     email: string;
     password?: string;
     mobile: string;
