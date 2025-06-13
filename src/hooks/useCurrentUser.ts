@@ -16,15 +16,17 @@ interface MonthlyLimits {
 interface UserDetails {
     id: string;
     name: string;
+    fatherName: string;
+    empId: string;
+    punchId: string;
     email: string;
     mobile: string;
     role: UserRole;
     department: string;
-    leaveBalance: number;
     additionalLeave: number
     monthlyLimits: MonthlyLimits;
     manager?: {
-        id: string;
+        _id: string;
         name: string;
         email: string;
     };

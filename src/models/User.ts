@@ -4,7 +4,7 @@ import { Schema, model, models } from 'mongoose';
 export interface IUser {
     name: string;
     fatherName: string;
-    empId?: string;
+    empId: string;
     punchId: string;
     email: string;
     password?: string;
@@ -14,7 +14,6 @@ export interface IUser {
     department: string;
     joinDate: Date;
     isActive: boolean;
-    leaveBalance: number;
     additionalLeave: number;
     monthlyLimits: {
         halfDayLeaves: number;
@@ -28,6 +27,9 @@ export interface IUser {
 
 const userSchema = new Schema<IUser>({
     name: { type: String, required: true },
+    fatherName: { type: String, required: true },
+    empId: { type: String },
+    punchId: { type: String },
     email: { type: String, required: true, unique: true },
     password: { type: String, select: true },
     mobile: { type: String, required: true },
@@ -41,7 +43,6 @@ const userSchema = new Schema<IUser>({
     department: { type: String, required: true },
     joinDate: { type: Date, default: Date.now },
     isActive: { type: Boolean, default: true },
-    leaveBalance: { type: Number, default: 1 },
     additionalLeave: { type: Number, default: 0 },
     monthlyLimits: {
         halfDayLeaves: { type: Number, default: 2 },

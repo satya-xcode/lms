@@ -60,9 +60,11 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { type, reason, startDate, endDate, startTime, endTime } = body;
-
-        if (!type || !reason) {
+        const { name, fatherName, empId, punchId, type, reason, startDate, endDate, startTime, endTime } = body;
+        // console.log(
+        //     'PARAMS', { name, fatherName, empId, punchId, type, reason, startDate, endDate, startTime, endTime }
+        // )
+        if (!type || !reason || !name || !fatherName) {
             return NextResponse.json({ error: 'Type and reason are required' }, { status: 400 });
         }
 
@@ -193,6 +195,10 @@ export async function POST(req: Request) {
 
         // Create the leave request
         const leaveRequest = new LeaveRequest({
+            name: name,
+            fatherName: fatherName,
+            empId: empId,
+            punchId: punchId,
             staff: user._id,
             manager: user.manager,
             type,

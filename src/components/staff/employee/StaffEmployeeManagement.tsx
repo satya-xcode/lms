@@ -130,7 +130,7 @@ const StaffEmployeeManagement = () => {
                                     <TableCell>{employee?.punchId}</TableCell>
                                     <TableCell>{employee?.department}</TableCell>
                                     <TableCell>
-                                        {employee?.leaveType}
+                                        {employee?.type}
                                         {/* {employee?.leaveType === 'gate-pass' && 'Gate Pass'}
                                         {employee?.leaveType === 'additional-leave' && 'Additional Leave'} */}
                                     </TableCell>

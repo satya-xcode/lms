@@ -3,7 +3,7 @@
 import useSWR from 'swr';
 import axios from 'axios';
 import qs from 'query-string';
-export const useStaffEmployeesLeave = (staffId?: string, leaveType?: string) => {
+export const useStaffEmployeesLeave = (staffId?: string, managerId?: string, leaveType?: string) => {
     // Construct query parameters properly
     const queryParams = qs.stringify({
         staffId,
@@ -17,10 +17,10 @@ export const useStaffEmployeesLeave = (staffId?: string, leaveType?: string) => 
         url => axios.get(url).then(res => res.data),
         { revalidateOnFocus: false }
     );
-
+    // console.log('ManagerId', managerId)
     const createLeaveRequest = async (leaveData: any) => {
         try {
-            const response = await axios.post(`/api/staffs/employee/leaves?staffId=${staffId}`, leaveData);
+            const response = await axios.post(`/api/staffs/employee/leaves?staffId=${staffId}&managerId=${managerId}`, leaveData);
             mutate();
             return response.data;
         } catch (err) {

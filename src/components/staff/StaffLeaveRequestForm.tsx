@@ -23,14 +23,14 @@ import {
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LeaveRequestType } from '@/models/LeaveRequest';
-import { LeaveRequestFormValues, leaveRequestSchemas } from '@/utils/leaveRequestSchema';
+import { leaveRequestSchemas } from '@/utils/leaveRequestSchema';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useStaffLeaves } from '@/hooks/staff/useStaffLeaves';
 interface LeaveRequestFormProps {
-    onSubmit: (values: LeaveRequestFormValues) => Promise<void>;
+    onSubmit: (values: unknown) => Promise<void>;
     userLimits: {
         halfDayLeaves: number;
         fullDayLeaves: number;
@@ -48,7 +48,7 @@ const StaffLeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, user
 
     const [requestType, setRequestType] = useState<LeaveRequestType>('half-day');
 
-    const initialValues: LeaveRequestFormValues = {
+    const initialValues = {
         type: 'half-day',
         reason: '',
         startDate: new Date(),
@@ -114,6 +114,10 @@ const StaffLeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, user
                                 // await onSubmit(values);
                                 await onSubmit({
                                     ...values,
+                                    name: user?.name,
+                                    fatherName: user?.fatherName,
+                                    empId: user?.empId,
+                                    punchId: user?.punchId,
                                     type: requestType // Ensure we use the current request type
                                 });
                                 resetForm();
@@ -184,7 +188,7 @@ const StaffLeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, user
                                                         textField: {
                                                             fullWidth: true,
                                                             error: touched.startDate && !!errors.startDate,
-                                                            helperText: touched.startDate && errors.startDate,
+                                                            helperText: touched.startDate && !!errors.startDate,
                                                             required: true
                                                         },
                                                     }}
@@ -200,7 +204,7 @@ const StaffLeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, user
                                                         textField: {
                                                             fullWidth: true,
                                                             error: touched.endDate && !!errors.endDate,
-                                                            helperText: touched.endDate && errors.endDate,
+                                                            helperText: touched.endDate && !!errors.endDate,
                                                             required: true
                                                         },
                                                     }}
@@ -221,7 +225,7 @@ const StaffLeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, user
                                                         textField: {
                                                             fullWidth: true,
                                                             error: touched.startTime && !!errors.startTime,
-                                                            helperText: touched.startTime && errors.startTime,
+                                                            helperText: touched.startTime && !!errors.startTime,
                                                         },
                                                     }}
                                                 />
@@ -236,7 +240,7 @@ const StaffLeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, user
                                                         textField: {
                                                             fullWidth: true,
                                                             error: touched.endTime && !!errors.endTime,
-                                                            helperText: touched.endTime && errors.endTime,
+                                                            helperText: touched.endTime && !!errors.endTime,
                                                         },
                                                     }}
                                                 />

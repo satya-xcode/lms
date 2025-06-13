@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // utils/validationSchemas.ts
 import * as yup from 'yup';
-import { LeaveRequestType } from '@/models/LeaveRequest';
+// import { LeaveRequestType } from '@/models/LeaveRequest';
 
 const commonFields = {
     reason: yup.string().required('Reason is required').max(500, 'Reason should be less than 500 characters'),
@@ -88,11 +88,12 @@ export const leaveRequestSchemas = {
     }),
 };
 
-export type LeaveRequestFormValues = {
-    type: LeaveRequestType;
-    reason: string;
-    startDate?: Date;
-    endDate?: Date;
-    startTime?: Date;
-    endTime?: Date;
-};
+// export type LeaveRequestFormValues = {
+//     name:string,
+//     type: LeaveRequestType;
+//     reason: string;
+//     startDate?: Date;
+//     endDate?: Date;
+//     startTime?: Date;
+//     endTime?: Date;
+// };

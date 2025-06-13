@@ -53,8 +53,9 @@ const validationSchema = Yup.object({
 });
 
 const EmployeeFormDialog = ({ open, setOpenForm }: any) => {
-    const { user }: any = useCurrentUser()
-    const { createLeaveRequest } = useStaffEmployeesLeave(user?.id);
+    const { user } = useCurrentUser()
+    // console.log('user', user)
+    const { createLeaveRequest } = useStaffEmployeesLeave(user?.id, user?.manager?._id);
     const formik = useFormik({
         initialValues: {
             name: '',

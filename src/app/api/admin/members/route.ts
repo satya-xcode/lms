@@ -37,9 +37,9 @@ export async function POST(req: Request) {
     }
 
     try {
-        const { name, email, mobile, role, department, manager, password } = await req.json();
+        const { name, fatherName, empId, punchId, email, mobile, role, department, manager, password } = await req.json();
 
-        if (!name || !email || !mobile || !role || !department) {
+        if (!name || !fatherName || !email || !mobile || !role || !department) {
             return NextResponse.json({ error: 'Required fields are missing' }, { status: 400 });
         }
 
@@ -54,6 +54,9 @@ export async function POST(req: Request) {
 
         const newStaff = new User({
             name,
+            fatherName,
+            empId,
+            punchId,
             email,
             mobile,
             role,

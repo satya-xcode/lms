@@ -96,7 +96,6 @@ const MembersManagement = () => {
         }
     };
 
-
     if (isAuthLoading) {
         return (
             <Box sx={{ p: 3 }}>
@@ -218,18 +217,15 @@ const MembersManagement = () => {
                         {({ values, errors, touched, setFieldValue }) => (
                             <Form>
                                 <DialogContent dividers>
-                                    <Grid container spacing={2}>
-                                        <Grid size={{ xs: 12, sm: 6 }}>
-                                            <Field
-                                                as={TextField}
-                                                name="name"
-                                                label="Full Name"
-                                                fullWidth
-                                                error={touched.name && !!errors.name}
-                                                helperText={touched.name && errors.name}
-                                            />
-                                        </Grid>
-
+                                    <Grid container spacing={theme.spacing(2)}>
+                                        <Field
+                                            as={TextField}
+                                            name="name"
+                                            label="Full Name"
+                                            fullWidth
+                                            error={touched.name && !!errors.name}
+                                            helperText={touched.name && errors.name}
+                                        />
                                         <Field
                                             as={TextField}
                                             label="Father's Name"
@@ -239,33 +235,25 @@ const MembersManagement = () => {
                                             helperText={touched.fatherName && errors.fatherName}
                                         />
 
-
-
-                                        <Grid container spacing={theme.spacing(4)}>
-                                            <Grid size={{ xs: 12, md: 6 }}>
-
-                                                <Field
-                                                    as={TextField}
-                                                    label="Employee ID"
-                                                    name="empId"
-                                                    fullWidth
-                                                    error={touched.empId && !!errors.empId}
-                                                    helperText={touched.empId && errors.empId}
-                                                />
-
-
-                                            </Grid>
-                                            <Grid size={{ xs: 12, md: 6 }}>
-
-                                                <Field
-                                                    as={TextField}
-                                                    label="Punch ID"
-                                                    name="punchId"
-                                                    fullWidth
-                                                    error={touched.punchId && !!errors.punchId}
-                                                    helperText={touched.punchId && errors.punchId}
-                                                />
-                                            </Grid>
+                                        <Grid size={{ xs: 12, md: 6 }}>
+                                            <Field
+                                                as={TextField}
+                                                label="Employee ID"
+                                                name="empId"
+                                                fullWidth
+                                                error={touched.empId && !!errors.empId}
+                                                helperText={touched.empId && errors.empId}
+                                            />
+                                        </Grid>
+                                        <Grid size={{ xs: 12, md: 6 }}>
+                                            <Field
+                                                as={TextField}
+                                                label="Punch ID"
+                                                name="punchId"
+                                                fullWidth
+                                                error={touched.punchId && !!errors.punchId}
+                                                helperText={touched.punchId && errors.punchId}
+                                            />
                                         </Grid>
                                         <Grid size={{ xs: 12, sm: 6 }}>
                                             <Field

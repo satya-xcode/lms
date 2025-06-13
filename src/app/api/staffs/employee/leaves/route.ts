@@ -4,13 +4,13 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { connectToDB } from '@/lib/mongoose';
 import { authOptions } from '@/lib/auth/authOptions';
-import EmployeeLeaves from '@/models/EmployeeLeaves';
+import LeaveRequest from '@/models/LeaveRequest';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const staffId = searchParams.get('staffId')?.toString();
     const leaveType = searchParams.get('leaveType')?.toString();
-    console.log('Query parameters:', { staffId, leaveType });
+    // console.log('Query parameters:', { staffId, leaveType });
 
     if (!staffId) {
         return new Response('Invalid staffId', { status: 400 });
@@ -26,8 +26,8 @@ export async function GET(request: Request) {
     try {
         // Check if leaveType exists and is not empty
         if (leaveType) {
-            console.log('Filtered leaveType query:', staffId, leaveType);
-            const leaveRequests = await EmployeeLeaves.find({
+            // console.log('Filtered leaveType query:', staffId, leaveType);
+            const leaveRequests = await LeaveRequest.find({
                 staff: staffId,
                 leaveType: leaveType
             }).populate('staff', 'name email mobile');
@@ -39,8 +39,8 @@ export async function GET(request: Request) {
         }
         // Else case (leaveType is undefined, null, or empty string)
         else {
-            console.log('All leaveTypes query:', staffId);
-            const leaveRequests = await EmployeeLeaves.find({
+            // console.log('All leaveTypes query:', staffId);
+            const leaveRequests = await LeaveRequest.find({
                 staff: staffId
             }).populate('staff', 'name email mobile');
 
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const staffId = searchParams.get('staffId');
-
+    const managerId = searchParams.get('managerId');
     await connectToDB();
     const session: any = await getServerSession(authOptions);
     if (session?.user?.id !== staffId) {
@@ -72,14 +72,15 @@ export async function POST(request: Request) {
 
     try {
         const { name, fatherName, empId, punchId, department, leaveType, reason, startDate, endDate } = await request.json();
-        const res = await EmployeeLeaves.create({
+        const res = await LeaveRequest.create({
             name: name,
             fatherName: fatherName,
             empId: empId,
             punchId: punchId,
             department,
             staff: staffId,
-            leaveType,
+            manager: managerId,
+            type: leaveType,
             reason,
             startDate: new Date(startDate),
             endDate: new Date(endDate),
@@ -112,7 +113,7 @@ export async function DELETE(request: Request) {
     }
 
     try {
-        const deleted = await EmployeeLeaves.findByIdAndDelete(employeeId)
+        const deleted = await LeaveRequest.findByIdAndDelete(employeeId)
         if (!deleted) {
             return NextResponse.json({ error: 'Leave not found' }, { status: 404 })
         }
