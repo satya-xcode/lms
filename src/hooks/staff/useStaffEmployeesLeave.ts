@@ -4,11 +4,12 @@ import useSWR from 'swr';
 import axios from 'axios';
 import qs from 'query-string';
 export const useStaffEmployeesLeave = (staffId?: string, managerId?: string, leaveType?: string) => {
+    // console.log('Alllllllllllllll', { staffId, leaveType, managerId })
     // Construct query parameters properly
     const queryParams = qs.stringify({
         staffId,
-        leaveType: leaveType || undefined // Only include leaveType if it has a value
-    }, { skipNull: true, skipEmptyString: true });
+        leaveType: leaveType // Only include leaveType if it has a value
+    });
 
     const apiUrl = staffId ? `/api/staffs/employee/leaves?${queryParams}` : null;
 
@@ -17,7 +18,7 @@ export const useStaffEmployeesLeave = (staffId?: string, managerId?: string, lea
         url => axios.get(url).then(res => res.data),
         { revalidateOnFocus: false }
     );
-    // console.log('ManagerId', managerId)
+
     const createLeaveRequest = async (leaveData: any) => {
         try {
             const response = await axios.post(`/api/staffs/employee/leaves?staffId=${staffId}&managerId=${managerId}`, leaveData);
@@ -27,7 +28,6 @@ export const useStaffEmployeesLeave = (staffId?: string, managerId?: string, lea
             throw err;
         }
     };
-
 
     const updateEmployee = async (id: string, employeeData: any) => {
         try {

@@ -46,6 +46,8 @@ export const useStaffLeaves = ({ staffId, status, type }: {
                 fatherName: data?.fatherName,
                 empId: data?.empId,
                 punchId: data?.punchId,
+                department: data?.department,
+                role: data?.role,
                 reason: data.reason,
                 ...(data.type === 'full-day' || data.type === 'additional-leave'
                     ? { startDate: data.startDate, endDate: data.endDate }

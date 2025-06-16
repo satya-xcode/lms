@@ -27,19 +27,24 @@ import EmployeeWorksFormDialog from '@/components/staff/employee/company-works/E
 
 const EmplyeeWorksLeave = () => {
     const router = useRouter()
-    const { user }: any = useCurrentUser()
+    const { user } = useCurrentUser()
+    // console.log(
+    //     'user', user
+    // )
     const {
         employees,
         isLoading,
         error,
         deleteEmployeeLeave,
-    } = useStaffEmployeesLeave(user?.id, 'gate-pass(Work)');
+    } = useStaffEmployeesLeave(user?.id, String(user?.manager?._id), 'gate-pass(Work)');
     const [openForm, setOpenForm] = useState(false);
 
     const handleAddEmployee = () => {
         setOpenForm(true);
     };
-
+    // console.log(
+    //     'employees', employees
+    // )
     // Function to calculate time difference based on leave type
     const calculateDuration = (start: Date, end: Date) => {
         const startDate = new Date(start);
@@ -49,11 +54,11 @@ const EmplyeeWorksLeave = () => {
         const totalSeconds = Math.floor(diffMs / 1000);
         // const days = Math.floor(totalSeconds / (60 * 60 * 24));
         const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
-        // const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+        const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
         // const seconds = totalSeconds % 60;
         // Format the duration as a string
         // const duration = `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
-        const duration = `${hours} hours`
+        const duration = `${hours} hours,${minutes} minutes`
         return duration;
     };
 
@@ -89,6 +94,7 @@ const EmplyeeWorksLeave = () => {
                                 <TableCell>Name</TableCell>
                                 <TableCell>Father Name</TableCell>
                                 <TableCell>Employee ID</TableCell>
+                                <TableCell>Role</TableCell>
                                 <TableCell>Punch ID</TableCell>
                                 <TableCell>Department</TableCell>
                                 <TableCell>Leave Type</TableCell>
@@ -103,11 +109,12 @@ const EmplyeeWorksLeave = () => {
                                     <TableCell>{employee?.name}</TableCell>
                                     <TableCell>{employee?.fatherName}</TableCell>
                                     <TableCell>{employee?.empId}</TableCell>
+                                    <TableCell>{employee?.role}</TableCell>
                                     <TableCell>{employee?.punchId}</TableCell>
                                     <TableCell>{employee?.department}</TableCell>
                                     <TableCell>
 
-                                        {employee?.leaveType}
+                                        {employee?.type}
 
                                     </TableCell>
                                     <TableCell>

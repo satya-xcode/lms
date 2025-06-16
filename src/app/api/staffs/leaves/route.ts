@@ -60,11 +60,11 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { name, fatherName, empId, punchId, type, reason, startDate, endDate, startTime, endTime } = body;
+        const { name, fatherName, empId, role, punchId, department, type, reason, startDate, endDate, startTime, endTime } = body;
         // console.log(
         //     'PARAMS', { name, fatherName, empId, punchId, type, reason, startDate, endDate, startTime, endTime }
         // )
-        if (!type || !reason || !name || !fatherName) {
+        if (!type || !reason || !name || !fatherName || !role) {
             return NextResponse.json({ error: 'Type and reason are required' }, { status: 400 });
         }
 
@@ -200,7 +200,9 @@ export async function POST(req: Request) {
             empId: empId,
             punchId: punchId,
             staff: user._id,
+            department: department,
             manager: user.manager,
+            role: role,
             type,
             reason,
             startDate: start,

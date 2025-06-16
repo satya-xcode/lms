@@ -6,7 +6,6 @@ import React from 'react'
 // import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { LeaveRequestFormValues } from '@/utils/leaveRequestSchema';
 
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useStaffLeaves } from '@/hooks/staff/useStaffLeaves';
@@ -18,7 +17,7 @@ function LeaveFormSection() {
     const router = useRouter();
 
     // Handle form submission
-    const handleSubmit = async (values: LeaveRequestFormValues) => {
+    const handleSubmit = async (values: any) => {
         try {
             const res = await createStaffLeaveRequest(values)
             toast.success(res.message, { richColors: true });

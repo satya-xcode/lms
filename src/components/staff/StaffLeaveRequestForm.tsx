@@ -118,6 +118,8 @@ const StaffLeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, user
                                     fatherName: user?.fatherName,
                                     empId: user?.empId,
                                     punchId: user?.punchId,
+                                    department: user?.department,
+                                    role: user?.role,
                                     type: requestType // Ensure we use the current request type
                                 });
                                 resetForm();
@@ -187,8 +189,8 @@ const StaffLeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, user
                                                     slotProps={{
                                                         textField: {
                                                             fullWidth: true,
-                                                            error: touched.startDate && !!errors.startDate,
-                                                            helperText: touched.startDate && !!errors.startDate,
+                                                            error: touched.startDate && Boolean(errors.startDate),
+                                                            helperText: touched.startDate && String(errors.startDate),
                                                             required: true
                                                         },
                                                     }}
@@ -203,8 +205,8 @@ const StaffLeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, user
                                                     slotProps={{
                                                         textField: {
                                                             fullWidth: true,
-                                                            error: touched.endDate && !!errors.endDate,
-                                                            helperText: touched.endDate && !!errors.endDate,
+                                                            error: touched.endDate && Boolean(errors.endDate),
+                                                            helperText: touched.endDate && String(errors.endDate),
                                                             required: true
                                                         },
                                                     }}
@@ -224,7 +226,7 @@ const StaffLeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, user
                                                     slotProps={{
                                                         textField: {
                                                             fullWidth: true,
-                                                            error: touched.startTime && !!errors.startTime,
+                                                            error: Boolean(touched.startTime) && Boolean(errors.startTime),
                                                             helperText: touched.startTime && !!errors.startTime,
                                                         },
                                                     }}
@@ -239,8 +241,8 @@ const StaffLeaveRequestForm: React.FC<LeaveRequestFormProps> = ({ onSubmit, user
                                                     slotProps={{
                                                         textField: {
                                                             fullWidth: true,
-                                                            error: touched.endTime && !!errors.endTime,
-                                                            helperText: touched.endTime && !!errors.endTime,
+                                                            error: touched?.endTime && Boolean(errors?.endTime),
+                                                            helperText: touched?.endTime && String(errors.endTime),
                                                         },
                                                     }}
                                                 />

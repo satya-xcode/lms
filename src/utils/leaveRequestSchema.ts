@@ -7,7 +7,7 @@ const commonFields = {
     reason: yup.string().required('Reason is required').max(500, 'Reason should be less than 500 characters'),
 };
 
-export const leaveRequestSchemas = {
+export const leaveRequestSchemas: any = {
     'half-day': yup.object().shape({
         ...commonFields,
         startTime: yup.date().required('Start time is required'),

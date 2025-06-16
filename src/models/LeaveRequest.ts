@@ -2,7 +2,7 @@
 import { Schema, model, models } from 'mongoose';
 
 export type LeaveRequestStatus = 'pending' | 'approved' | 'rejected' | 'submitted';
-export type LeaveRequestType = 'half-day' | 'full-day' | 'additional-leave' | 'gate-pass' | 'late-pass';
+export type LeaveRequestType = 'half-day' | 'full-day' | 'additional-leave' | 'gate-pass' | 'late-pass' | 'gate-pass(Work)';
 
 export interface ILeaveRequest {
     name: string;
@@ -14,6 +14,7 @@ export interface ILeaveRequest {
     department: string;
     type: LeaveRequestType;
     reason: string;
+    role: string;
     startDate: Date;
     endDate: Date;
     status: LeaveRequestStatus;
@@ -29,9 +30,10 @@ const leaveRequestSchema = new Schema<ILeaveRequest>({
     staff: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     manager: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     department: { type: String },
+    role: { type: String },
     type: {
         type: String,
-        enum: ['half-day', 'full-day', 'additional-leave', 'gate-pass', 'late-pass'],
+        enum: ['half-day', 'full-day', 'additional-leave', 'gate-pass', 'late-pass', 'gate-pass(Work)'],
         required: true
     },
     reason: { type: String, required: true },

@@ -114,6 +114,7 @@ const StaffEmployeeManagement = () => {
                                 <TableCell>Father Name</TableCell>
                                 <TableCell>Employee ID</TableCell>
                                 <TableCell>Punch ID</TableCell>
+                                <TableCell>Role</TableCell>
                                 <TableCell>Department</TableCell>
                                 <TableCell>Leave Type</TableCell>
                                 <TableCell>Duration</TableCell>
@@ -128,6 +129,7 @@ const StaffEmployeeManagement = () => {
                                     <TableCell>{employee?.fatherName}</TableCell>
                                     <TableCell>{employee?.empId}</TableCell>
                                     <TableCell>{employee?.punchId}</TableCell>
+                                    <TableCell>{employee?.role}</TableCell>
                                     <TableCell>{employee?.department}</TableCell>
                                     <TableCell>
                                         {employee?.type}

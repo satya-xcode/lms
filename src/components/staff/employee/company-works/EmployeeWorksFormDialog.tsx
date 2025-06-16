@@ -42,7 +42,7 @@ const validationSchema = Yup.object({
 
 const EmployeeWorksFormDialog = ({ open, setOpenForm }: any) => {
     const { user }: any = useCurrentUser()
-    const { createLeaveRequest } = useStaffEmployeesLeave(user?.id);
+    const { createLeaveRequest } = useStaffEmployeesLeave(user?.id, String(user?.manager?._id), 'gate-pass(Work)');
     const formik = useFormik({
         initialValues: {
             name: '',
